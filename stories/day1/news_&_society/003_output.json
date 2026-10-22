@@ -1,0 +1,34 @@
+{
+  "id": "US_Denmark_Greenland_Deal",
+  "generated": {
+    "what_happened": "President Donald Trump announced a security agreement between the United States, Denmark, and Greenland to expand the U.S. military presence and grant Washington control over the island's security. The agreement maintains Danish sovereignty and Greenlandic self-determination while prohibiting foreign adversaries from establishing bases or making sensitive investments in the territory. Officials from all three governments are expected to sign the pact at the United Nations General Assembly, though it still requires approval from the Danish and Greenlandic parliaments.",
+    "whats_different": "Coverage differed in political context and emphasis on past friction versus potential benefits. Left-leaning coverage highlighted previous U.S. threats of military force, cited external analysis that characterized past actions as damaging to international relationships, and noted election dynamics. Right-leaning reporting emphasized statements framing the outcome as a financial win at no cost to taxpayers, while center reporting focused primarily on official statements regarding Arctic security and administrative details.",
+    "keywords": [
+      {
+        "source_name": "Associated Press",
+        "bias_label": "left",
+        "terms": [
+          "false claims"
+        ],
+        "explanation": "By highlighting Trump's false claims regarding foreign threats, the source aligns with its left bias by scrutinizing the administration's stated security rationale."
+      },
+      {
+        "source_name": "The Hill",
+        "bias_label": "center",
+        "terms": [
+          "completely and permanently"
+        ],
+        "explanation": "The phrase completely and permanently reflects the center source's focus on relaying official administration statements about the scope of the agreement."
+      },
+      {
+        "source_name": "New York Post",
+        "bias_label": "right",
+        "terms": [
+          "NO COST to the United States"
+        ],
+        "explanation": "The phrase NO COST to the United States reinforces the right-leaning source's favorable framing of the agreement as a benefit without taxpayer expense."
+      }
+    ]
+  },
+  "reviewed_by_human": true
+}

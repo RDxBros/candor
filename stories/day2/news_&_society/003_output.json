@@ -1,0 +1,36 @@
+{
+  "id": "illegal-immigrant-shot-protests-erupt-in-bronx",
+  "generated": {
+    "what_happened": "Federal Immigration and Customs Enforcement officers shot a 28-year-old undocumented Dominican national, Oscar Belgal, during an attempted arrest on Thursday afternoon in Marble Hill. A five-year-old child was inside the vehicle at the time of the gunfire but was physically unhurt, while Belgal suffered a neck wound and was taken to a local hospital before being moved to federal detention. Following the shooting, demonstrators gathered outside the hospital and engaged in confrontations with local police officers. In response to the confrontation, New York Governor Kathy Hochul and New York City Mayor Zohran Mamdani spoke with federal officials, including President Donald Trump, to request a halt to federal immigration enforcement operations in New York.",
+    "whats_different": "Left-leaning reporting places its primary focus on local political outrage and street demonstrations protesting federal immigration enforcement actions. Center-leaning coverage concentrates on scrutinizing and fact-checking statements made by federal officials regarding conversations with local authorities. Meanwhile, right-leaning coverage emphasizes federal statements detailing the suspect's criminal history and alleged gang associations, while highlighting criticism directed at local sanctuary policies.",
+    "keywords": [
+      {
+        "source_name": "The Guardian",
+        "bias_label": "left",
+        "terms": [
+          "demanded curbs",
+          "fierce protests"
+        ],
+        "explanation": "The Guardian's use of the phrases \"demanded curbs\" and \"fierce protests\" reflects its left lean by highlighting institutional and community opposition to federal enforcement tactics."
+      },
+      {
+        "source_name": "amNew York",
+        "bias_label": "center",
+        "terms": [
+          "raised more questions than answers"
+        ],
+        "explanation": "By stating that a federal official's narrative \"raised more questions than answers\", amNew York reflects a center lean centered on evaluating the factual reliability of official statements."
+      },
+      {
+        "source_name": "Fox News",
+        "bias_label": "right",
+        "terms": [
+          "illegal immigrant",
+          "prior grand larceny conviction"
+        ],
+        "explanation": "The choice of the terms \"illegal immigrant\" and \"prior grand larceny conviction\" aligns with Fox News's right lean by foregrounding immigration status and law enforcement allegations."
+      }
+    ]
+  },
+  "reviewed_by_human": false
+}

@@ -1,0 +1,122 @@
+[
+  {
+    "id": "fo_chiefs-game_00",
+    "topic": "Chiefs game",
+    "category": "culture_&_entertainment",
+    "day": "day1",
+    "reviewed_by_human": false,
+    "items": [
+      { "id": "fo_chiefs-game_01", "text": "The Kansas City Chiefs played the Indianapolis Colts on a Sunday night.", "answer": "fact", "explanation": "The game schedule can confirm the day and time.", "story_id": "swift_kelce_touchdown" },
+      { "id": "fo_chiefs-game_02", "text": "Travis Kelce scored his first touchdown of the 2026 NFL season.", "answer": "fact", "explanation": "The scoring record can confirm the play and season milestone.", "story_id": "swift_kelce_touchdown" },
+      { "id": "fo_chiefs-game_03", "text": "The Chiefs-Colts game ended in overtime with a 33-30 Kansas City victory.", "answer": "fact", "explanation": "The final game record can confirm the score and overtime result.", "story_id": "swift_kelce_touchdown" },
+      { "id": "fo_chiefs-game_04", "text": "Taylor Swift is a meaningful subject for coverage of the Kansas City Chiefs.", "answer": "opinion", "explanation": "“Meaningful” is a judgment about what belongs in sports coverage." },
+      { "id": "fo_chiefs-game_05", "text": "Travis Kelce is a convincing choice for the focus of a Chiefs game recap.", "answer": "opinion", "explanation": "“Convincing choice” depends on what a reader wants from a game recap." },
+      { "id": "fo_chiefs-game_06", "text": "Overtime games are better entertainment than games decided in regulation.", "answer": "opinion", "explanation": "“Better entertainment” is a preference without one measurable standard." }
+    ]
+  },
+  {
+    "id": "fo_literary-recognition_00",
+    "topic": "Literary recognition",
+    "category": "culture_&_entertainment",
+    "day": "day1",
+    "reviewed_by_human": false,
+    "items": [
+      { "id": "fo_literary-recognition_01", "text": "Anne Carson was awarded the 2026 Nobel Prize in Literature.", "answer": "fact", "explanation": "The award record can confirm the recipient, category and year.", "story_id": "anne-carson-nobel-prize" },
+      { "id": "fo_literary-recognition_02", "text": "Anne Carson was 76 years old when she received the 2026 Nobel Prize in Literature.", "answer": "fact", "explanation": "The award record and biographical record can confirm her age at that time.", "story_id": "anne-carson-nobel-prize" },
+      { "id": "fo_literary-recognition_03", "text": "Anne Carson's body of work includes the book Autobiography of Red.", "answer": "fact", "explanation": "A publication record can confirm the author and title.", "story_id": "anne-carson-nobel-prize" },
+      { "id": "fo_literary-recognition_04", "text": "Anne Carson worked as a professor teaching classics, translation, and artistic collaboration.", "answer": "fact", "explanation": "An academic employment record can confirm her role and teaching areas.", "story_id": "anne-carson-nobel-prize" },
+      { "id": "fo_literary-recognition_05", "text": "Anne Carson's works include The Beauty of the Husband and Eros the Bittersweet.", "answer": "fact", "explanation": "Publication records can confirm whether Carson wrote these titles.", "story_id": "anne-carson-nobel-prize" },
+      { "id": "fo_literary-recognition_06", "text": "Anne Carson is a convincing choice for major literary recognition.", "answer": "opinion", "explanation": "“Convincing choice” is an evaluation of the recipient, not a recorded result." }
+    ]
+  },
+  {
+    "id": "fo_baseball-game_00",
+    "topic": "Baseball game",
+    "category": "sports_&_gaming",
+    "day": "day1",
+    "reviewed_by_human": false,
+    "items": [
+      { "id": "fo_baseball-game_01", "text": "José Ramírez hit a sixth-inning solo home run in a 5-3 win over the Athletics.", "answer": "fact", "explanation": "The game record can confirm the inning, play and final score.", "story_id": "jose_ramirez" },
+      { "id": "fo_baseball-game_02", "text": "A 5-3 victory over the Athletics improved the Cleveland Guardians to a 79-75 record.", "answer": "fact", "explanation": "The standings and game record can confirm the team's record after the victory.", "story_id": "jose_ramirez" },
+      { "id": "fo_baseball-game_03", "text": "José Ramírez is a meaningful figure in Cleveland baseball history.", "answer": "opinion", "explanation": "“Meaningful figure” is an evaluation without one official threshold." },
+      { "id": "fo_baseball-game_04", "text": "Home run totals are a sensible way to compare major-league hitters.", "answer": "opinion", "explanation": "“Sensible” judges the usefulness of a statistic rather than reporting it." },
+      { "id": "fo_baseball-game_05", "text": "A 79-75 record is enough to define a successful season.", "answer": "opinion", "explanation": "“Enough” depends on a person's standard for season success." },
+      { "id": "fo_baseball-game_06", "text": "Late-season home runs deserve more media attention than early-season achievements.", "answer": "opinion", "explanation": "“Deserve more attention” expresses a preference about sports coverage." }
+    ]
+  },
+  {
+    "id": "fo_media-merger_00",
+    "topic": "Media merger settlement",
+    "category": "money_&_career",
+    "day": "day1",
+    "reviewed_by_human": false,
+    "items": [
+      { "id": "fo_media-merger_01", "text": "Paramount Skydance reached a settlement to resolve an antitrust lawsuit challenging the merger.", "answer": "fact", "explanation": "The settlement and lawsuit records can confirm what legal dispute was resolved.", "story_id": "paramount_warner_merger" },
+      { "id": "fo_media-merger_02", "text": "The challenged Paramount Skydance merger with Warner Bros. Discovery was valued at $110 billion.", "answer": "fact", "explanation": "The merger record can confirm the parties and stated value.", "story_id": "paramount_warner_merger" },
+      { "id": "fo_media-merger_03", "text": "The merged Paramount Skydance and Warner Bros. Discovery entity committed to increasing U.S. film production spending.", "answer": "fact", "explanation": "The written settlement can confirm the production-spending commitment.", "story_id": "paramount_warner_merger" },
+      { "id": "fo_media-merger_04", "text": "The merged Paramount Skydance and Warner Bros. Discovery entity committed to 30 to 32 theatrical releases annually.", "answer": "fact", "explanation": "The written settlement can confirm the annual release commitment.", "story_id": "paramount_warner_merger" },
+      { "id": "fo_media-merger_05", "text": "Paramount Skydance's commitments concerning CBS News and CNN were a reasonable response to consolidation concerns.", "answer": "opinion", "explanation": "“Reasonable response” is a judgment about the settlement terms." },
+      { "id": "fo_media-merger_06", "text": "Independent editorial boards are a weak safeguard against media consolidation.", "answer": "opinion", "explanation": "“Weak safeguard” evaluates a policy without a single measurable threshold." }
+    ]
+  },
+  {
+    "id": "fo_sportswear-partnerships_00",
+    "topic": "Sportswear partnerships",
+    "category": "sports_&_gaming",
+    "day": "day1",
+    "reviewed_by_human": false,
+    "items": [
+      { "id": "fo_sportswear-partnerships_01", "text": "Kylian Mbappé ended his long-term Nike partnership to become On's global ambassador.", "answer": "fact", "explanation": "The partnership record can confirm the ended relationship and new ambassador role.", "story_id": "mbappe_signs_with_on" },
+      { "id": "fo_sportswear-partnerships_02", "text": "Kylian Mbappé is a convincing choice to represent On globally.", "answer": "opinion", "explanation": "“Convincing choice” evaluates a brand representative without a fixed standard." },
+      { "id": "fo_sportswear-partnerships_03", "text": "Long-term athlete partnerships are a sensible strategy for sportswear brands.", "answer": "opinion", "explanation": "“Sensible strategy” evaluates a business approach rather than recording one." },
+      { "id": "fo_sportswear-partnerships_04", "text": "Football footwear is a weak direction for the On brand.", "answer": "opinion", "explanation": "“Weak direction” is an evaluation of a business strategy." },
+      { "id": "fo_sportswear-partnerships_05", "text": "The On brand should involve athletes directly in future product design.", "answer": "opinion", "explanation": "“Should involve” expresses a preference about product development." },
+      { "id": "fo_sportswear-partnerships_06", "text": "A football director is a weak fit for a sportswear product team.", "answer": "opinion", "explanation": "“Weak fit” evaluates an organizational choice without a fixed standard." }
+    ]
+  },
+  {
+    "id": "fo_bills-game_00",
+    "topic": "Bills game",
+    "category": "sports_&_gaming",
+    "day": "day1",
+    "reviewed_by_human": false,
+    "items": [
+      { "id": "fo_bills-game_01", "text": "The Buffalo Bills played the Detroit Lions on a Thursday night.", "answer": "fact", "explanation": "The game schedule can confirm the day and time.", "story_id": "bills_vs_lions" },
+      { "id": "fo_bills-game_02", "text": "The Buffalo Bills secured a 41-31 victory over the Detroit Lions.", "answer": "fact", "explanation": "The game record can confirm the teams and final score.", "story_id": "bills_vs_lions" },
+      { "id": "fo_bills-game_03", "text": "Josh Allen recorded five touchdowns, including three passing and two rushing scores.", "answer": "fact", "explanation": "The player statistics can confirm the passing and rushing totals.", "story_id": "bills_vs_lions" },
+      { "id": "fo_bills-game_04", "text": "Highmark Stadium is a meaningful setting for a Buffalo Bills victory.", "answer": "opinion", "explanation": "“Meaningful setting” is a judgment about the venue." },
+      { "id": "fo_bills-game_05", "text": "Josh Allen is a convincing centerpiece for coverage of the Buffalo offense.", "answer": "opinion", "explanation": "“Convincing centerpiece” is an editorial preference, not a game statistic." },
+      { "id": "fo_bills-game_06", "text": "A 2-0 record is too early for judging a head coach.", "answer": "opinion", "explanation": "“Too early” depends on a person's standard for evaluating coaches." }
+    ]
+  },
+  {
+    "id": "fo_mac-storage_00",
+    "topic": "Mac storage tools",
+    "category": "technology",
+    "day": "day1",
+    "reviewed_by_human": false,
+    "items": [
+      { "id": "fo_mac-storage_01", "text": "RemoveMacAI was released as an open-source tool for Mac users.", "answer": "fact", "explanation": "The release documentation can confirm the tool's name and intended platform.", "story_id": "removemacai_tool" },
+      { "id": "fo_mac-storage_02", "text": "RemoveMacAI was released to disable Apple Intelligence and remove downloaded AI models.", "answer": "fact", "explanation": "The release documentation can confirm the described functions.", "story_id": "removemacai_tool" },
+      { "id": "fo_mac-storage_03", "text": "RemoveMacAI was released to free roughly 12GB or more of storage.", "answer": "fact", "explanation": "The release documentation can confirm the stated storage amount.", "story_id": "removemacai_tool" },
+      { "id": "fo_mac-storage_04", "text": "RemoveMacAI's release included a revert command to restore AI functionality.", "answer": "fact", "explanation": "The release documentation can confirm the revert command and its described purpose.", "story_id": "removemacai_tool" },
+      { "id": "fo_mac-storage_05", "text": "Apple Intelligence controls belong together under one simple master switch.", "answer": "opinion", "explanation": "“Belong together” expresses a product-design preference." },
+      { "id": "fo_mac-storage_06", "text": "Recovering 12GB of storage is worth installing a third-party Mac tool.", "answer": "opinion", "explanation": "“Worth installing” depends on a user's storage needs and software preferences." }
+    ]
+  },
+  {
+    "id": "fo_press-access_00",
+    "topic": "White House press access",
+    "category": "news_&_society",
+    "day": "day1",
+    "reviewed_by_human": false,
+    "items": [
+      { "id": "fo_press-access_01", "text": "The White House access decision named reporters from CNN, MS NOW, and Politico.", "answer": "fact", "explanation": "The recorded announcement can confirm which organizations were named.", "story_id": "White_House_Media_Bans" },
+      { "id": "fo_press-access_02", "text": "The White House access decision was stated to take effect immediately.", "answer": "fact", "explanation": "The recorded announcement can confirm its stated effective timing.", "story_id": "White_House_Media_Bans" },
+      { "id": "fo_press-access_03", "text": "Equal White House access for CNN, MS NOW, and Politico is fair.", "answer": "opinion", "explanation": "“Fair” is a judgment about how access should be distributed." },
+      { "id": "fo_press-access_04", "text": "Giving officials discretion over White House press access is reasonable.", "answer": "opinion", "explanation": "“Reasonable” evaluates who ought to control access decisions." },
+      { "id": "fo_press-access_05", "text": "A uniform written policy is the sensible standard for White House reporters.", "answer": "opinion", "explanation": "“Sensible standard” is a policy preference, not a recorded rule." },
+      { "id": "fo_press-access_06", "text": "Persistent coverage disputes are enough reason to reconsider an outlet's access.", "answer": "opinion", "explanation": "“Enough reason” depends on a person's standard for restricting access." }
+    ]
+  }
+]

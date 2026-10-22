@@ -1,0 +1,35 @@
+{
+  "id": "White_House_Media_Bans",
+  "generated": {
+    "what_happened": "President Donald Trump announced on social media and during an Oval Office gathering that reporters from CNN, MS NOW, and Politico are banned from the White House effective immediately. Trump attributed the decision to what he described as persistent dishonest reporting by the three organizations, while indicating additional news outlets could face similar restrictions. Representatives from CNN, Politico, and the White House Correspondents' Association criticized the decision as a violation of First Amendment protections, noting that journalists remained on White House grounds on Friday evening. The announcement follows previous disputes between the administration and news organizations over access credentials and press coverage.",
+    "whats_different": "Left-leaning coverage characterized the announcement as an escalation in an ongoing conflict over press freedoms while highlighting broader administrative actions against media outlets. Center-leaning reporting framed the statement around First Amendment legal concerns and past judicial rulings regarding White House press credentials. Right-leaning coverage described the decision through its practical impacts on media pool logistics and included statements that framed the president's demands as a call for accurate reporting.",
+    "keywords": [
+      {
+        "source_name": "HuffPost",
+        "bias_label": "left",
+        "terms": [
+          "baselessly accused",
+          "credible news outlets"
+        ],
+        "explanation": "By stating that the president baselessly accused the media and referring to them as credible news outlets, the left-leaning source highlights its editorial skepticism toward the administration."
+      },
+      {
+        "source_name": "United Press International",
+        "bias_label": "center",
+        "terms": [
+          "ongoing battle"
+        ],
+        "explanation": "Describing the conflict as an ongoing battle reflects the center-leaning outlet's approach of reporting persistent friction between the administration and the press in straightforward terms."
+      },
+      {
+        "source_name": "New York Post",
+        "bias_label": "right",
+        "terms": [
+          "defended the president"
+        ],
+        "explanation": "Noting that a former official defended the president aligns with the right-leaning outlet's inclusion of favorable context regarding the administration's media criticism."
+      }
+    ]
+  },
+  "reviewed_by_human": true
+}

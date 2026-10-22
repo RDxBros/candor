@@ -1,0 +1,23 @@
+{
+  "id": "removemacai_tool",
+  "date": "2026-09-18",
+  "topics": [
+    "technology"
+  ],
+  "headline": "Open-Source Tool Lets You Delete 12GB of Apple Intelligence Data on macOS",
+  "sources": [
+    {
+      "outlet": "The Verge",
+      "excerpt": "An open-source tool lets you delete 12GB of Apple Intelligence data on macOS. Getting some extra storage space on your Mac could be as easy as deleting Apple’s AI features with a new open-source command line tool called RemoveMacAI. There used to be a single Settings toggle for disabling Apple Intelligence, but that was removed in macOS 27. Now, the models stay on your disk, and the features are split up across different settings panes. As spotted earlier by MacRumors, the RemoveMacAI developer said in a post on Reddit that the tool essentially does what the old settings toggle did, deleting the models and turning the features off: You have to find about a dozen settings, and several of them are under Screen Time. Even when everything is off, the foundation models stay on disk, and that’s about 12 GB. I wrote RemoveMacAI to do all of it in one go. It turns off Siri, Writing Tools, Genmoji, Image Playground, the ChatGPT extension and all the summaries, then it deletes the models and stops macOS from downloading them again. The developer claims the changes persist across macOS updates, and says Dictation will still work. There’s also a “removemacai revert” command that can turn everything back on and allow the AI models to download again if you change your mind. The developer says Apple’s AI models take up “about 12GB” of space, but it could be even more than that, as some users pointed out in comments on the developer’s Reddit thread. On my MacBook Air, Apple Intelligence is listed as taking up 35.05GB of space, which I found by going to my storage in the Settings app and clicking the “i” icon beside “macOS.” RemoveMacAI also has a “removemacai status” command that can show the size of each individual AI model on your Mac.",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1004672/mac-delete-apple-intelligence-ai-tool",
+      "source_id": "9c7e2a7d-0966-49f2-9e03-59053d754957"
+    },
+    {
+      "outlet": "MacRumors",
+      "excerpt": "A new open-source tool is making waves in the Mac community by helping users reclaim valuable storage space taken up by Apple's AI models. Called \"RemoveMacAI,\" the command line tool disables Apple Intelligence on macOS 27, removes its downloaded models, and prevents them from being downloaded again. In macOS 27, Apple removed the toggle to disable Apple Intelligence wholesale, and simply disabling individual features doesn't remove the models from your Mac's drive. As explained by the developer, RemoveMacAI gets around this by using a configuration profile to switch off Apple's own asset management service and remove the models. It then configures the system so attempts to download the removed models are redirected to a closed local port, preventing them from immediately coming back. And it does all this without disabling System Integrity Protection (SIP) or manually deleting files from protected system locations, unlike some older tools have. The tool can free up roughly 12GB of space depending on which models are present on your Mac. That said, some users are reporting cases of Apple Intelligence models having taken up a lot more space, which they've now reclaimed. With the Apple models gone, you lose all Siri-related AI features, Writing Tools, Genmoji, Image Playground, ChatGPT integration, summaries, smart replies, inline predictions, Photos Clean Up, Spatial Photos, and Xcode predictive completion. Even so, plenty of users appear happy to make the sacrifice to free up space, especially on non-upgradeable Macs with 256GB of storage. The profile reportedly persists across updates. And if you're wondering, dictation still works. There's also a revert command to restore everything AI-related. The project has attracted hundreds of GitHub stars since its release last week, and there's lots of discussion on Reddit and Hacker News about the need for such a tool. Just be aware that MacRumors isn't endorsing RemoveMacAI, and anyone using it does so at their own risk. The developer has mentioned one caveat, and it's that some of the configuration-profile restriction keys that the tool relies on were deprecated by Apple in macOS 26.4. While they still work in macOS 27.0.1, a future version could always change that. Something to keep in mind.",
+      "url": "https://www.macrumors.com/2026/10/05/apple-intelligence-removal-tool-frees-mac-storage/",
+      "source_id": "f3fa3d2d-e625-40bc-bd8d-10a64cb66ac7"
+    }
+  ],
+  "lean_comparison": false
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "id": "fixture_round_001",
+    "story_id": "fixture_story_001",
+    "topic": "Public records",
+    "category": "technology",
+    "day": "day1",
+    "reviewed_by_human": true,
+    "items": [
+      { "id": "fixture_item_001", "text": "The meeting began at 9 a.m.", "answer": "fact", "explanation": "Minutes can verify the start time." },
+      { "id": "fixture_item_002", "text": "The meeting was painfully long.", "answer": "opinion", "explanation": "“Painfully long” is a personal judgment." },
+      { "id": "fixture_item_003", "text": "Six members attended the meeting.", "answer": "fact", "explanation": "An attendance record can settle the count." },
+      { "id": "fixture_item_004", "text": "The chair made the best decision.", "answer": "opinion", "explanation": "“Best” is an evaluation, not a recorded measurement." },
+      { "id": "fixture_item_005", "text": "The final vote was four to two.", "answer": "fact", "explanation": "The recorded vote can confirm the numbers." },
+      { "id": "fixture_item_006", "text": "The result will certainly improve the city.", "answer": "opinion", "explanation": "“Will certainly” makes a prediction that cannot yet be checked." }
+    ]
+  }
+]

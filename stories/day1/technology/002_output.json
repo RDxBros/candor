@@ -1,0 +1,7 @@
+{
+  "id": "removemacai_tool",
+  "generated": {
+    "what_happened": "A new open-source command-line tool called RemoveMacAI has been released to help Mac users reclaim storage space by completely disabling Apple Intelligence and removing its downloaded foundation models from the system. Because recent versions of macOS removed the master toggle for turning off the AI features while leaving the underlying models on the disk, this tool automates the process of shutting off the features and purging the data, freeing up roughly 12GB or more of storage. The utility uses a configuration profile to halt asset management and redirect download attempts, and it includes a revert command to restore the AI functionality if desired."
+  },
+  "reviewed_by_human": false
+}

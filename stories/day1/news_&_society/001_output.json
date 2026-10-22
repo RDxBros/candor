@@ -1,0 +1,34 @@
+{
+  "id": "un_report_us_war_crimes_iran",
+  "generated": {
+    "what_happened": "A United Nations fact-finding mission reported finding reasonable grounds to believe that U.S. airstrikes on a school in Minab and a facility in Lamerd constituted war crimes under international law. The report also found that Iranian authorities committed crimes against humanity through widespread violence and unlawful killings during anti-government protests. U.S. officials rejected the findings of the report, stating that the Iranian government was the only party in the conflict committing war crimes.",
+    "whats_different": "Left-leaning coverage emphasized potential upcoming diplomatic meetings between regional nations alongside the details of civilian casualties from the strikes. Center-leaning reporting focused on the legal status of the UN mission as an investigative entity and provided details regarding Iranian casualty figures. Right-leaning coverage characterized the report as an attack on the administration, giving emphasis to official statements defending U.S. policy against Iran.",
+    "keywords": [
+      {
+        "source_name": "CNBC News",
+        "bias_label": "left",
+        "terms": [
+          "crimes against humanity committed"
+        ],
+        "explanation": "Selecting the term \"crimes against humanity committed\" aligns with left-leaning coverage highlighting formal international human rights findings against state actors."
+      },
+      {
+        "source_name": "Reuters",
+        "bias_label": "center",
+        "terms": [
+          "investigative, not judicial bodies"
+        ],
+        "explanation": "Using the phrase \"investigative, not judicial bodies\" reflects center-leaning reporting that emphasizes institutional roles and neutral legal limitations."
+      },
+      {
+        "source_name": "New York Post",
+        "bias_label": "right",
+        "terms": [
+          "courageously ensuring"
+        ],
+        "explanation": "Quoting the statement that Trump is \"courageously ensuring\" national security aligns with right-leaning coverage that features favorable portrayals of executive leadership."
+      }
+    ]
+  },
+  "reviewed_by_human": true
+}

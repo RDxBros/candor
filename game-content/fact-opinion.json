@@ -1,0 +1,295 @@
+[
+  {
+    "id": "fo_chiefs-game_00",
+    "story_id": "swift_kelce_touchdown",
+    "topic": "Chiefs game",
+    "category": "culture_&_entertainment",
+    "day": "day1",
+    "reviewed_by_human": true,
+    "items": [
+      {
+        "id": "fo_chiefs-game_01",
+        "text": "Travis Kelce scored his first touchdown of the 2026 NFL season.",
+        "answer": "fact",
+        "explanation": "The scoring record shows who scored and when.",
+        "story_id": "swift_kelce_touchdown"
+      },
+      {
+        "id": "fo_chiefs-game_02",
+        "text": "The Chiefs' offense was too predictable against the Colts' defense.",
+        "answer": "opinion",
+        "explanation": "“Too predictable” depends on what each viewer expects; no record settles it."
+      },
+      {
+        "id": "fo_chiefs-game_03",
+        "text": "Kelce's touchdown came in the first quarter.",
+        "answer": "fact",
+        "explanation": "The play-by-play record shows which quarter each score came in.",
+        "story_id": "swift_kelce_touchdown"
+      },
+      {
+        "id": "fo_chiefs-game_04",
+        "text": "Overtime games are better entertainment than games decided in regulation.",
+        "answer": "opinion",
+        "explanation": "“Better entertainment” is a preference with no single measurable standard."
+      },
+      {
+        "id": "fo_chiefs-game_05",
+        "text": "Kansas City won 33-30 in overtime.",
+        "answer": "fact",
+        "explanation": "The final score and overtime result are in the official game record.",
+        "story_id": "swift_kelce_touchdown"
+      },
+      {
+        "id": "fo_chiefs-game_06",
+        "text": "Cameras should cut to Taylor Swift less often during Chiefs games.",
+        "answer": "opinion",
+        "explanation": "“Should” expresses a preference about broadcasts; a record can't settle it."
+      }
+    ]
+  },
+  {
+    "id": "fo_baseball-game_00",
+    "story_id": "jose_ramirez",
+    "topic": "Baseball game",
+    "category": "sports_&_gaming",
+    "day": "day1",
+    "reviewed_by_human": true,
+    "items": [
+      {
+        "id": "fo_baseball-game_01",
+        "text": "A 79-75 record is enough to call this a good season for Cleveland.",
+        "answer": "opinion",
+        "explanation": "“Enough” and “good” depend on what standard a fan uses."
+      },
+      {
+        "id": "fo_baseball-game_02",
+        "text": "José Ramírez hit a sixth-inning solo home run to reach 1,000 career RBIs.",
+        "answer": "fact",
+        "explanation": "The game log records the inning, the play and his career RBI total.",
+        "story_id": "jose_ramirez"
+      },
+      {
+        "id": "fo_baseball-game_03",
+        "text": "Ramírez will own every Cleveland batting record before he retires.",
+        "answer": "opinion",
+        "explanation": "“Will” makes a prediction about the future; no present record can settle it."
+      },
+      {
+        "id": "fo_baseball-game_04",
+        "text": "Pitching around Ramírez late in the game would have been smarter for the Athletics.",
+        "answer": "opinion",
+        "explanation": "“Smarter” judges a decision that can't be replayed; no record can confirm it."
+      },
+      {
+        "id": "fo_baseball-game_05",
+        "text": "A sellout crowd at Progressive Field watched the Guardians rally from a 3-0 deficit.",
+        "answer": "fact",
+        "explanation": "Attendance and the inning-by-inning score are in the game record.",
+        "story_id": "jose_ramirez"
+      },
+      {
+        "id": "fo_baseball-game_06",
+        "text": "Round-number milestones like 1,000 RBIs matter more than single-season totals.",
+        "answer": "opinion",
+        "explanation": "“Matter more” compares two things by a standard that varies from fan to fan."
+      }
+    ]
+  },
+  {
+    "id": "fo_media-merger_00",
+    "story_id": "paramount_warner_merger",
+    "topic": "Media merger settlement",
+    "category": "money_&_career",
+    "day": "day1",
+    "reviewed_by_human": true,
+    "items": [
+      {
+        "id": "fo_media-merger_01",
+        "text": "The merger of Paramount Skydance and Warner Bros. Discovery was valued at $110 billion.",
+        "answer": "fact",
+        "explanation": "The deal's announced value is in the transaction record.",
+        "story_id": "paramount_warner_merger"
+      },
+      {
+        "id": "fo_media-merger_02",
+        "text": "Paramount would have lost the case if it had gone to trial.",
+        "answer": "opinion",
+        "explanation": "A trial that never happened has no recorded result, so this can only be a judgment."
+      },
+      {
+        "id": "fo_media-merger_03",
+        "text": "A group of 12 state attorneys general sued to block the merger.",
+        "answer": "fact",
+        "explanation": "The lawsuit filing lists the states that brought it.",
+        "story_id": "paramount_warner_merger"
+      },
+      {
+        "id": "fo_media-merger_04",
+        "text": "Combining Paramount and Warner Bros. will give viewers more choice.",
+        "answer": "opinion",
+        "explanation": "“Will give more choice” is a prediction about the future that no record can confirm yet."
+      },
+      {
+        "id": "fo_media-merger_05",
+        "text": "The settlement set a $30 million fee for each film Paramount misses in its release target.",
+        "answer": "fact",
+        "explanation": "The fee is written into the settlement terms.",
+        "story_id": "paramount_warner_merger"
+      },
+      {
+        "id": "fo_media-merger_06",
+        "text": "Paramount agreed to freeze the merger while the legal challenge was pending.",
+        "answer": "fact",
+        "explanation": "The freeze agreement is part of the court record.",
+        "story_id": "paramount_warner_merger"
+      }
+    ]
+  },
+  {
+    "id": "fo_press-access_00",
+    "story_id": "White_House_Media_Bans",
+    "topic": "White House press access",
+    "category": "news_&_society",
+    "day": "day1",
+    "reviewed_by_human": true,
+    "items": [
+      {
+        "id": "fo_press-access_01",
+        "text": "A president should be able to decide which outlets send reporters inside the White House.",
+        "answer": "opinion",
+        "explanation": "“Should be able to” is a view about who ought to control access; a record can't settle it."
+      },
+      {
+        "id": "fo_press-access_02",
+        "text": "Trump's Truth Social post named CNN, MS NOW and Politico.",
+        "answer": "fact",
+        "explanation": "The post itself is the record of which outlets it named.",
+        "story_id": "White_House_Media_Bans"
+      },
+      {
+        "id": "fo_press-access_03",
+        "text": "Cutting a news outlet's White House access over its coverage goes too far.",
+        "answer": "opinion",
+        "explanation": "“Too far” depends on where a person draws the line."
+      },
+      {
+        "id": "fo_press-access_04",
+        "text": "The announcement came on a Friday.",
+        "answer": "fact",
+        "explanation": "The date of the post and the Oval Office remarks is on the record.",
+        "story_id": "White_House_Media_Bans"
+      },
+      {
+        "id": "fo_press-access_05",
+        "text": "CNN and Politico will take the dispute to court.",
+        "answer": "opinion",
+        "explanation": "“Will” is a prediction about what happens next; nothing recorded settles it yet."
+      },
+      {
+        "id": "fo_press-access_06",
+        "text": "CNN said its reporters were still working in the White House on the evening of the announcement.",
+        "answer": "fact",
+        "explanation": "CNN's statement is on the record, so what it said can be checked.",
+        "story_id": "White_House_Media_Bans"
+      }
+    ]
+  },
+  {
+    "id": "fo_bills-game_00",
+    "story_id": "bills_vs_lions",
+    "topic": "Bills game",
+    "category": "sports_&_gaming",
+    "day": "day1",
+    "reviewed_by_human": true,
+    "items": [
+      {
+        "id": "fo_bills-game_01",
+        "text": "The Bills beat the Lions 41-31 on Thursday night.",
+        "answer": "fact",
+        "explanation": "The final score and date are in the official game record.",
+        "story_id": "bills_vs_lions"
+      },
+      {
+        "id": "fo_bills-game_02",
+        "text": "The Lions' defense was unprepared for Buffalo's offense.",
+        "answer": "opinion",
+        "explanation": "“Unprepared” is a judgment; a game record can't settle it."
+      },
+      {
+        "id": "fo_bills-game_03",
+        "text": "Josh Allen opened the scoring with a 1-yard touchdown run.",
+        "answer": "fact",
+        "explanation": "The scoring summary lists each score in order.",
+        "story_id": "bills_vs_lions"
+      },
+      {
+        "id": "fo_bills-game_04",
+        "text": "The Bills will make the playoffs this season.",
+        "answer": "opinion",
+        "explanation": "“Will” is a prediction; the season hasn't finished."
+      },
+      {
+        "id": "fo_bills-game_05",
+        "text": "Buffalo scored on each of its first four drives.",
+        "answer": "fact",
+        "explanation": "The drive chart records how each possession ended.",
+        "story_id": "bills_vs_lions"
+      },
+      {
+        "id": "fo_bills-game_06",
+        "text": "Josh Allen is the most exciting quarterback in the NFL to watch.",
+        "answer": "opinion",
+        "explanation": "“Most exciting” depends on each viewer's taste."
+      }
+    ]
+  },
+  {
+    "id": "fo_mac-storage_00",
+    "story_id": "removemacai_tool",
+    "topic": "Mac storage tools",
+    "category": "technology",
+    "day": "day1",
+    "reviewed_by_human": true,
+    "items": [
+      {
+        "id": "fo_mac-storage_01",
+        "text": "RemoveMacAI is an open-source command-line tool.",
+        "answer": "fact",
+        "explanation": "The project's public repository shows its format and source code.",
+        "story_id": "removemacai_tool"
+      },
+      {
+        "id": "fo_mac-storage_02",
+        "text": "Apple should let people turn off Apple Intelligence with a single switch.",
+        "answer": "opinion",
+        "explanation": "“Should” expresses a product-design preference."
+      },
+      {
+        "id": "fo_mac-storage_03",
+        "text": "In macOS 27, Apple removed the toggle that turned off Apple Intelligence entirely.",
+        "answer": "fact",
+        "explanation": "The operating system's settings can be checked directly.",
+        "story_id": "removemacai_tool"
+      },
+      {
+        "id": "fo_mac-storage_04",
+        "text": "Giving up AI features is a fair trade for 12GB of extra storage.",
+        "answer": "opinion",
+        "explanation": "“Fair trade” depends on how much each person values the features and the space."
+      },
+      {
+        "id": "fo_mac-storage_05",
+        "text": "Apple will bring the master toggle back in a later update.",
+        "answer": "opinion",
+        "explanation": "“Will” is a prediction about Apple's future plans."
+      },
+      {
+        "id": "fo_mac-storage_06",
+        "text": "Installing a third-party tool like this is riskier than it looks.",
+        "answer": "opinion",
+        "explanation": "“Riskier than it looks” is a judgment about risk with no single measure."
+      }
+    ]
+  }
+]
