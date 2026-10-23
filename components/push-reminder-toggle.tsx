@@ -144,11 +144,11 @@ export function PushReminderToggle() {
 
   const checked = state === "subscribed";
   const unavailable = state === "loading" || state === "busy" || state === "denied" || state === "unsupported" || state === "ios-install";
-  const helper = state === "subscribed" ? "On. Candor will remind you at 11:00 AM Eastern when a new drop is waiting."
+  const helper = state === "subscribed" ? "Candor will notify you at 11AM ET"
     : state === "denied" ? "Notifications are blocked. Re-enable them in your browser or device settings."
     : state === "unsupported" ? "This browser doesn’t support web push reminders."
     : state === "ios-install" ? "Add Candor to your Home Screen first, then turn reminders on from the installed app."
-    : message || "Get one reminder at 11:00 AM Eastern when a new drop is waiting.";
+    : message || "Get notified when a new drop is waiting";
 
   return (
     <section className="reminder-setting" aria-labelledby="reminder-title">
