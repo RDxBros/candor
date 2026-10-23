@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { FACT_OPINION_CONFIG } from "../lib/config";
-import { getOrCreateAnonymousId } from "../lib/client-storage";
+import { getOrCreateAnonymousId, STORAGE_KEYS } from "../lib/client-storage";
 import type { FactOpinionRound, FactOpinionStoryOption } from "../lib/fact-opinion-content";
 import { orderedFactOpinionStories } from "../lib/fact-opinion-game";
-import { topicLabel } from "../lib/topics";
+import { normalizeGameTopics, scopeGameStories, topicFallbackNotice } from "../lib/game-topic-scope";
+import { topicLabel, type TopicValue } from "../lib/topics";
 import { ArrowIcon, BackIcon, CheckIcon } from "./app-icons";
 import { GameEntryShell } from "./game-entry-shell";
 import { FactOpinionPreview } from "./fact-opinion-preview";
@@ -15,16 +16,25 @@ import { track } from "../lib/analytics";
 type Attempt = { content_round_id: string; is_correct: boolean };
 type PickerMode = "scored" | "practice";
 
-export function FactOpinionEntry({ rounds, stories, currentDay }: {
+export function FactOpinionEntry({ rounds, stories, dayOverride }: {
   rounds: FactOpinionRound[];
   stories: FactOpinionStoryOption[];
-  currentDay: string;
+  dayOverride?: string;
 }) {
   const [attempts, setAttempts] = useState<Attempt[] | null>(null);
   const [pickerMode, setPickerMode] = useState<PickerMode | null>(null);
   const [visibleCount, setVisibleCount] = useState<number>(FACT_OPINION_CONFIG.picker_page_size);
+  const [selectedTopics, setSelectedTopics] = useState<TopicValue[] | null>(null);
 
   useEffect(() => { track("screen_viewed", { screen: pickerMode ? "game_picker" : "game_home", game_type: "fact_opinion" }); }, [pickerMode]);
+
+  useEffect(() => {
+    try {
+      setSelectedTopics(normalizeGameTopics(JSON.parse(localStorage.getItem(STORAGE_KEYS.topics) ?? "[]")));
+    } catch {
+      setSelectedTopics([]);
+    }
+  }, []);
 
   useEffect(() => {
     const anonymousId = getOrCreateAnonymousId();
@@ -37,12 +47,19 @@ export function FactOpinionEntry({ rounds, stories, currentDay }: {
 
   const played = useMemo(() => new Set((attempts ?? []).map((attempt) => attempt.content_round_id)), [attempts]);
   const storyPlayed = (story: FactOpinionStoryOption) => story.roundIds.every((roundId) => played.has(roundId));
-  const remainingStories = attempts === null ? null : stories.filter((story) => !storyPlayed(story)).length;
+  const playedStoryIds = new Set(stories.filter(storyPlayed).map((story) => story.id));
+  const scoredScope = selectedTopics === null ? null : scopeGameStories({ stories, selectedTopics, playedStoryIds, mode: "scored" });
+  const practiceScope = selectedTopics === null ? null : scopeGameStories({ stories, selectedTopics, playedStoryIds, mode: "practice" });
+  const pickerScope = pickerMode === "practice" ? practiceScope : scoredScope;
+  const remainingStories = attempts === null || selectedTopics === null
+    ? null
+    : (scoredScope?.stories ?? []).filter((story) => !storyPlayed(story)).length;
   const total = attempts?.length ?? 0;
   const correct = attempts?.filter((attempt) => attempt.is_correct).length ?? 0;
   const accuracy = total ? Math.round((correct / total) * 100) : 0;
-  const orderedStories = orderedFactOpinionStories(stories, played);
+  const orderedStories = orderedFactOpinionStories(pickerScope?.stories ?? [], played);
   const visibleStories = orderedStories.slice(0, visibleCount);
+  const fallbackCopy = topicFallbackNotice(pickerScope?.reason ?? scoredScope?.reason ?? null);
 
   function openPicker(nextMode: PickerMode) {
     setVisibleCount(FACT_OPINION_CONFIG.picker_page_size);
@@ -51,7 +68,11 @@ export function FactOpinionEntry({ rounds, stories, currentDay }: {
 
   function gameHref(story: FactOpinionStoryOption, requestedMode: PickerMode) {
     const actualMode = requestedMode === "scored" && storyPlayed(story) ? "practice" : requestedMode;
-    return `/game/fact-or-opinion?${new URLSearchParams({ day: currentDay, mode: actualMode, story: story.id })}`;
+    const params = new URLSearchParams({ mode: actualMode, story: story.id });
+    if (dayOverride) params.set("day", dayOverride);
+    if (selectedTopics?.length) params.set("topics", selectedTopics.join(","));
+    if (pickerScope?.topicFallback) params.set("topic_fallback", "1");
+    return `/game/fact-or-opinion?${params}`;
   }
 
   if (pickerMode) return <section className="fact-opinion-picker" aria-labelledby="fact-opinion-picker-title">
@@ -59,6 +80,7 @@ export function FactOpinionEntry({ rounds, stories, currentDay }: {
       <BackIcon /><span>Back</span>
     </button>
     <h1 id="fact-opinion-picker-title">Pick a story</h1>
+    {fallbackCopy ? <p className="muted-copy game-topic-fallback">{fallbackCopy}</p> : null}
     {pickerMode === "practice" ? <p className="fact-opinion-picker-note">Practice rounds don&apos;t count toward your stats.</p> : null}
     <ul className="fact-opinion-story-list">
       {visibleStories.map((story) => {
@@ -97,6 +119,7 @@ export function FactOpinionEntry({ rounds, stories, currentDay }: {
     <button className="primary-button" type="button" onClick={() => openPicker("practice")}>Practice</button>
     <p>Practice rounds don&apos;t count toward your stats.</p>
   </div> : <div className="lean-entry-action">
+    {fallbackCopy ? <p className="muted-copy game-topic-fallback">{fallbackCopy}</p> : null}
     <div className="lean-play-cta">
       <button className="primary-button" type="button" disabled={remainingStories === null} onClick={() => openPicker("scored")}>Play</button>
     </div>

@@ -34,6 +34,8 @@ test("eligible pool excludes unreviewed rounds and days after CURRENT_DAY", asyn
     { ...base, id: "unreviewed", story_id: "hidden-unreviewed", reviewed_by_human: false },
     { ...base, id: "future", story_id: "hidden-future", day: "day3" }
   ];
+  assert.deepEqual(eligibleFactOpinionRounds(rounds, "day1").map((round) => round.id), [base.id]);
+  assert.equal(eligibleFactOpinionRounds([{ ...base, id: "day-two", day: "day2" }], "day1").length, 0);
   assert.deepEqual(eligibleFactOpinionRounds(rounds, "day2").map((round) => round.id), [base.id]);
   assert.deepEqual([...new Set(eligibleFactOpinionRounds(rounds, "day2").map((round) => round.story_id))], [base.story_id]);
 });

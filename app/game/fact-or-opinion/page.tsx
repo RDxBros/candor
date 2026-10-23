@@ -5,10 +5,12 @@ import { HeaderMenu } from "../../../components/header-menu";
 import { StreakBadge } from "../../../components/streak-badge";
 import { resolveContentDay } from "../../../lib/content-day";
 import { loadFactOpinionContent } from "../../../lib/fact-opinion-content-server";
+import { filterStoriesForTopics } from "../../../lib/game-topic-scope";
+import { parseSelectedTopics } from "../../../lib/topics";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-type SearchParams = Promise<{ day?: string | string[]; mode?: string | string[]; story?: string | string[]; round?: string | string[] }>;
+type SearchParams = Promise<{ day?: string | string[]; mode?: string | string[]; story?: string | string[]; round?: string | string[]; topics?: string | string[]; topic_fallback?: string | string[] }>;
 
 export default async function FactOpinionPage({ searchParams }: { searchParams: SearchParams }) {
   const query = await searchParams;
@@ -18,7 +20,10 @@ export default async function FactOpinionPage({ searchParams }: { searchParams: 
   const mode = requestedMode === "scored" || requestedMode === "practice" ? requestedMode : null;
   const selectedStoryId = Array.isArray(query.story) ? query.story[0] : query.story;
   const { rounds, stories } = await loadFactOpinionContent(currentDay);
-  const selectedStory = stories.find((story) => story.id === selectedStoryId);
+  const selectedTopics = parseSelectedTopics(query.topics);
+  const topicFallback = (Array.isArray(query.topic_fallback) ? query.topic_fallback[0] : query.topic_fallback) === "1";
+  const scopedStories = mode ? filterStoriesForTopics(stories, selectedTopics, topicFallback) : stories;
+  const selectedStory = scopedStories.find((story) => story.id === selectedStoryId);
   const selectedRounds = selectedStory ? rounds.filter((round) => round.story_id === selectedStory.id) : [];
 
   const isPlaying = Boolean(mode && selectedStory);
@@ -37,6 +42,9 @@ export default async function FactOpinionPage({ searchParams }: { searchParams: 
       story={selectedStory}
       currentDay={currentDay}
       mode={mode}
-    /> : <FactOpinionEntry rounds={rounds} stories={stories} currentDay={currentDay} />}
+      selectedTopics={selectedTopics}
+      topicFallback={topicFallback}
+      dayOverride={requestedDay}
+    /> : <FactOpinionEntry rounds={rounds} stories={stories} dayOverride={requestedDay} />}
   </main>;
 }

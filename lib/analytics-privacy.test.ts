@@ -31,6 +31,8 @@ test("analysis views exclude internal events and deny browser client roles", asy
   assert.match(migration, /not \(e\.properties @> '\{"internal": true\}'::jsonb\)/i);
   assert.match(migration, /revoke all on table public\.events_external from public, anon, authenticated/i);
   assert.match(migration, /revoke all on table public\.user_timeline from public, anon, authenticated/i);
+  assert.match(migration, /create or replace view public\.reminder_events_external[\s\S]*from public\.events_external/i);
+  assert.match(migration, /revoke all on table public\.reminder_events_external from public, anon, authenticated/i);
   assert.match(migration, /has_table_privilege\('anon',[\s\S]*raise exception/i);
   assert.doesNotMatch(queries, /from public\.events e join public\.users u/i);
   assert.ok((queries.match(/public\.events_external/gi) ?? []).length >= 12);

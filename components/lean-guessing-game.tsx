@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { automaticGuessTransition, resumeLockedStory, storySegment } from "../lib/lean-game-flow";
 import { buildPracticeStoryRound, buildStoryRound, roundUsesEveryAvailableExcerpt, type StoredSourceOrders } from "../lib/lean-game-rounds";
 import type { Lean, LeanGameCard } from "../lib/lean-game-pool";
+import type { TopicValue } from "../lib/topics";
 import { gameModeEffects, practiceResultPresentation, practiceRoundStorageKey, practiceStoryBreakdown, previousPracticeStoriesKey, scoredRoundStorageKey } from "../lib/practice-mode";
 import {
   getOrCreateAnonymousId,
@@ -110,11 +111,14 @@ function consecutiveCorrect(round: LeanGameCard[], attempts: Record<string, Atte
   return combo;
 }
 
-export function LeanGuessingGame({ cards, currentDay, preferredStoryId, mode }: {
+export function LeanGuessingGame({ cards, currentDay, preferredStoryId, mode, selectedTopics, topicFallback, dayOverride }: {
   cards: LeanGameCard[];
   currentDay: string;
   preferredStoryId?: string;
   mode: "scored" | "practice";
+  selectedTopics: TopicValue[];
+  topicFallback: boolean;
+  dayOverride?: string;
 }) {
   const router = useRouter();
   const [round, setRound] = useState<LeanGameCard[] | null>(null);
@@ -246,7 +250,7 @@ export function LeanGuessingGame({ cards, currentDay, preferredStoryId, mode }: 
         try {
           const response = await fetch("/api/game-rounds", {
             method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ anonymous_id: anonymousId, current_day: currentDay, card_pairs: roundCards.map((card) => ({ day: card.day, story_id: card.storyId, source_id: card.sourceId })), analytics: analyticsContext() })
+            body: JSON.stringify({ anonymous_id: anonymousId, current_day: currentDay, selected_topics: selectedTopics, topic_fallback: topicFallback, card_pairs: roundCards.map((card) => ({ day: card.day, story_id: card.storyId, source_id: card.sourceId })), analytics: analyticsContext() })
           });
           if (response.ok) storedRoundId = (await response.json() as { round_id?: string }).round_id ?? null;
         } catch (error) { console.error("Unable to start scored round:", error); }
@@ -263,7 +267,7 @@ export function LeanGuessingGame({ cards, currentDay, preferredStoryId, mode }: 
     }
     void initializeRound();
     return () => { cancelled = true; };
-  }, [cards, currentDay, preferredStoryId, mode]);
+  }, [cards, currentDay, preferredStoryId, mode, selectedTopics, topicFallback]);
 
   const current = round?.[currentIndex] ?? null;
   const currentAttempt = current ? attempts[cardKey(current)] : undefined;
@@ -288,9 +292,9 @@ export function LeanGuessingGame({ cards, currentDay, preferredStoryId, mode }: 
   useEffect(() => {
     if (mode !== "practice" || !round?.length || practiceStarted.current) return;
     practiceStarted.current = true;
-    track("round_selected", { game_type: "lean_guess", story_id: round[0].storyId, mode: "practice" });
+    track("round_selected", { game_type: "lean_guess", story_id: round[0].storyId, mode: "practice", topic_fallback: topicFallback });
     track("game_started", { game_type: "lean_guess", mode: "practice" });
-  }, [mode, round]);
+  }, [mode, round, topicFallback]);
 
   useEffect(() => {
     if (mode !== "practice" || !roundFinished || practiceCompleted.current || !round) return;
@@ -461,7 +465,10 @@ export function LeanGuessingGame({ cards, currentDay, preferredStoryId, mode }: 
     const anonymousId = getOrCreateAnonymousId() ?? "visitor";
     if (mode === "practice") sessionStorage.removeItem(practiceRoundStorageKey(currentDay, anonymousId));
     else localStorage.removeItem(scoredRoundStorageKey(currentDay, anonymousId));
-    const params = new URLSearchParams({ day: currentDay, mode: nextMode, round: createGameUuid() });
+    const params = new URLSearchParams({ mode: nextMode, round: createGameUuid() });
+    if (dayOverride) params.set("day", dayOverride);
+    if (selectedTopics.length) params.set("topics", selectedTopics.join(","));
+    if (topicFallback) params.set("topic_fallback", "1");
     router.push(`/game/spot-the-lean?${params.toString()}`);
   }
 

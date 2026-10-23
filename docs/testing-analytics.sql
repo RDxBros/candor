@@ -210,3 +210,45 @@ select count(*) filter (where reached_bottom) bottom_reached_views,
     / nullif(count(*) filter (where reached_bottom), 0), 3) share_bottom_without_whats_different
 from views;
 
+
+-- DAILY REMINDERS -------------------------------------------------------------
+-- Opt-in rate among external users who reached onboarding. Latest toggle wins.
+with latest_toggle as (
+  select distinct on (anonymous_id)
+    anonymous_id,
+    (properties->>'enabled')::boolean as enabled
+  from public.reminder_events_external
+  where event_name = 'reminder_toggled'
+    and properties->>'result' in ('subscribed', 'unsubscribed')
+  order by anonymous_id, created_at desc
+), onboarded as (
+  select distinct anonymous_id
+  from public.events_external
+  where event_name = 'screen_viewed' and properties->>'screen' = 'onboarding'
+)
+select
+  count(*) as onboarded_users,
+  count(*) filter (where coalesce(t.enabled, false)) as opted_in_users,
+  round(100.0 * count(*) filter (where coalesce(t.enabled, false)) / nullif(count(*), 0), 1) as opt_in_percent
+from onboarded o
+left join latest_toggle t using (anonymous_id);
+
+-- Send outcomes and unique opens by content day. Internal users are excluded by the view.
+with sends as (
+  select properties->>'content_day' as content_day,
+    count(*) filter (where properties->>'result' = 'sent') as sent,
+    count(*) filter (where properties->>'result' = 'expired') as expired,
+    count(*) filter (where properties->>'result' = 'failed') as failed
+  from public.reminder_events_external
+  where event_name = 'reminder_sent'
+  group by 1
+), opens as (
+  select properties->>'content_day' as content_day, count(distinct anonymous_id) as opened
+  from public.reminder_events_external
+  where event_name = 'reminder_opened'
+  group by 1
+)
+select s.content_day, s.sent, s.expired, s.failed, coalesce(o.opened, 0) as opened,
+  round(100.0 * coalesce(o.opened, 0) / nullif(s.sent, 0), 1) as open_rate_percent
+from sends s left join opens o using (content_day)
+order by s.content_day;

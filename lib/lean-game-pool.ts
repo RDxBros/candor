@@ -7,6 +7,7 @@ export type Lean = "left" | "center" | "right";
 export type LeanGameCard = {
   day: string;
   storyId: string;
+  category: string;
   sourceId: string;
   headline: string;
   outlet: string;
@@ -53,6 +54,7 @@ export function cardsForGameStory(entry: Awaited<ReturnType<typeof getAllStories
     return [{
       day: entry.day,
       storyId: entry.story.id,
+      category: entry.story.category,
       sourceId: source.source_id,
       headline: entry.story.headline,
       outlet: source.outlet,

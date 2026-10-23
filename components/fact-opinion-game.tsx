@@ -12,6 +12,7 @@ import {
 } from "react";
 import { getOrCreateAnonymousId } from "../lib/client-storage";
 import type { FactOpinionAnswer, FactOpinionItem, FactOpinionRound, FactOpinionStoryOption } from "../lib/fact-opinion-content";
+import type { TopicValue } from "../lib/topics";
 import { shuffledFactOpinionItems } from "../lib/fact-opinion-content";
 import {
   emptyPlacements,
@@ -125,11 +126,14 @@ function SentenceSheet({ item, onClose }: {
   </div>;
 }
 
-export function FactOpinionGame({ rounds, story, currentDay, mode }: {
+export function FactOpinionGame({ rounds, story, currentDay, mode, selectedTopics, topicFallback, dayOverride }: {
   rounds: FactOpinionRound[];
   story: FactOpinionStoryOption;
   currentDay: string;
   mode: "scored" | "practice";
+  selectedTopics: TopicValue[];
+  topicFallback: boolean;
+  dayOverride?: string;
 }) {
   const router = useRouter();
   const [initializing, setInitializing] = useState(true);
@@ -213,7 +217,7 @@ export function FactOpinionGame({ rounds, story, currentDay, mode }: {
         try {
           const response = await fetch("/api/fact-opinion/rounds", {
             method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ anonymous_id: anonymousId, content_round_id: chosen.id, item_order: itemOrder, current_day: currentDay, analytics: analyticsContext() })
+            body: JSON.stringify({ anonymous_id: anonymousId, content_round_id: chosen.id, item_order: itemOrder, current_day: currentDay, selected_topics: selectedTopics, topic_fallback: topicFallback, analytics: analyticsContext() })
           });
           if (response.ok) serverRoundId = (await response.json() as { round_id?: string }).round_id ?? null;
         } catch (error) { console.error("Unable to start Fact or Opinion round:", error); }
@@ -228,7 +232,7 @@ export function FactOpinionGame({ rounds, story, currentDay, mode }: {
       if (!cancelled) setInitializing(false);
     });
     return () => { cancelled = true; };
-  }, [currentDay, mode, rounds, story.id]);
+  }, [currentDay, mode, rounds, selectedTopics, story.id, topicFallback]);
 
   useEffect(() => {
     if (!round) return;
@@ -242,9 +246,9 @@ export function FactOpinionGame({ rounds, story, currentDay, mode }: {
   useEffect(() => {
     if (mode !== "practice" || !round || practiceStarted.current) return;
     practiceStarted.current = true;
-    track("round_selected", { game_type: "fact_opinion", story_id: story.id, mode: "practice" });
+    track("round_selected", { game_type: "fact_opinion", story_id: story.id, mode: "practice", topic_fallback: topicFallback });
     track("game_started", { game_type: "fact_opinion", mode: "practice" });
-  }, [mode, round, story.id]);
+  }, [mode, round, story.id, topicFallback]);
 
   useEffect(() => {
     if (!locked || saved || !round || saveStarted.current) return;
@@ -370,7 +374,11 @@ export function FactOpinionGame({ rounds, story, currentDay, mode }: {
   function playAgain() {
     if (!saved) return;
     clearRoundState();
-    router.push(`/game/fact-or-opinion?${new URLSearchParams({ day: currentDay, mode, story: story.id, round: createUuid() })}`);
+    const params = new URLSearchParams({ mode, story: story.id, round: createUuid() });
+    if (dayOverride) params.set("day", dayOverride);
+    if (selectedTopics.length) params.set("topics", selectedTopics.join(","));
+    if (topicFallback) params.set("topic_fallback", "1");
+    router.push(`/game/fact-or-opinion?${params}`);
   }
 
   function closeSentenceSheet() {

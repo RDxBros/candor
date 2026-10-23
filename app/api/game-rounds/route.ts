@@ -5,6 +5,7 @@ import { LEAN_GAME_CONFIG } from "../../../lib/config";
 import { isSupabaseConfigured, supabaseRequest } from "../../../lib/supabase-server";
 import { logServerEvent, type AnalyticsContext } from "../../../lib/analytics-server";
 import { resolveContentDay } from "../../../lib/content-day";
+import { filterStoriesForTopics, normalizeGameTopics } from "../../../lib/game-topic-scope";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -14,10 +15,12 @@ type CardPair = { day: string; story_id: string; source_id: string };
 export async function POST(request: NextRequest) {
   if (!isSupabaseConfigured()) return NextResponse.json({ error: "The game is temporarily unavailable. Please try again later." }, { status: 503 });
   try {
-    const body = await request.json() as { anonymous_id?: string; card_pairs?: CardPair[]; current_day?: string; analytics?: AnalyticsContext };
+    const body = await request.json() as { anonymous_id?: string; card_pairs?: CardPair[]; current_day?: string; selected_topics?: unknown; topic_fallback?: boolean; analytics?: AnalyticsContext };
     const anonymousId = body.anonymous_id ?? "";
     const pairs = body.card_pairs ?? [];
     const currentDay = await resolveContentDay(body.current_day);
+    const selectedTopics = normalizeGameTopics(body.selected_topics);
+    const topicFallback = body.topic_fallback === true;
     if (!UUID.test(anonymousId) || !Array.isArray(pairs) || pairs.length < LEAN_GAME_CONFIG.min_excerpts_per_story ||
       pairs.length > 3 * LEAN_GAME_CONFIG.stories_per_round) {
       return NextResponse.json({ error: "Invalid round" }, { status: 400 });
@@ -26,7 +29,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "A round cannot contain duplicate cards" }, { status: 400 });
     }
     const pool = await buildLeanGamePool(currentDay, { logIssues: false });
-    const eligibleCards = new Map(pool.cards.map((card) => [`${card.storyId}:${card.sourceId}`, card]));
+    const scopedCards = filterStoriesForTopics(pool.cards.map((card) => ({ ...card, id: card.storyId })), selectedTopics, topicFallback);
+    const eligibleCards = new Map(scopedCards.map((card) => [`${card.storyId}:${card.sourceId}`, card]));
     const storyGroups = new Map<string, Array<{ sourceId: string; outlet: string }>>();
     for (const pair of pairs) {
       if (!UUID.test(pair.source_id) || !pair.story_id || !/^day\d+$/i.test(pair.day)) return NextResponse.json({ error: "Invalid round card" }, { status: 400 });
@@ -39,7 +43,7 @@ export async function POST(request: NextRequest) {
     const roundCards = pairs.map((pair) => ({ storyId: pair.story_id, sourceId: pair.source_id, outlet: eligibleCards.get(`${pair.story_id}:${pair.source_id}`)!.outlet }));
     if (storyGroups.size !== LEAN_GAME_CONFIG.stories_per_round || [...storyGroups.values()].some((group) =>
       (group.length !== 2 && group.length !== 3) || new Set(group.map((item) => item.outlet.trim().toLowerCase())).size !== group.length) ||
-      !roundUsesEveryAvailableExcerpt(roundCards, pool.cards)) {
+      !roundUsesEveryAvailableExcerpt(roundCards, scopedCards)) {
       return NextResponse.json({ error: "Each story must contribute every usable excerpt from a different outlet" }, { status: 400 });
     }
     await supabaseRequest("/rest/v1/users?on_conflict=anonymous_id", {
@@ -49,7 +53,7 @@ export async function POST(request: NextRequest) {
       method: "POST", headers: { Prefer: "return=representation" },
       body: JSON.stringify({ anonymous_id: anonymousId, game_type: "lean_guess", mode: "scored", card_pairs: pairs })
     });
-    logServerEvent({ anonymousId, eventName: "round_selected", properties: { game_type: "lean_guess", story_id: pairs[0].story_id, mode: "scored" }, context: body.analytics });
+    logServerEvent({ anonymousId, eventName: "round_selected", properties: { game_type: "lean_guess", story_id: pairs[0].story_id, mode: "scored", topic_fallback: topicFallback }, context: body.analytics });
     logServerEvent({ anonymousId, eventName: "game_started", properties: { game_type: "lean_guess", mode: "scored" }, context: body.analytics });
     return NextResponse.json({ round_id: rows[0]?.id }, { status: 201 });
   } catch (error) {

@@ -3613,3 +3613,62 @@ p {
     animation-delay: 0ms !important;
   }
 }
+
+.reminder-setting {
+  min-height: 84px;
+  padding: 16px 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.reminder-setting-copy { min-width: 0; }
+.reminder-setting h2 {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+}
+.reminder-setting p {
+  max-width: 30rem;
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+.reminder-switch {
+  position: relative;
+  width: 52px;
+  height: 32px;
+  flex: 0 0 auto;
+  padding: 0;
+  background: var(--soft-line);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color var(--duration-quick) var(--ease-out), border-color var(--duration-quick) var(--ease-out);
+}
+.reminder-switch span {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px color-mix(in oklch, var(--ink) 16%, transparent);
+  transition: transform var(--duration-quick) var(--ease-smooth-out);
+}
+.reminder-switch[aria-checked="true"] {
+  background: var(--button);
+  border-color: var(--button);
+}
+.reminder-switch[aria-checked="true"] span { transform: translateX(20px); }
+.reminder-switch:disabled { cursor: not-allowed; opacity: 0.58; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reminder-switch,
+  .reminder-switch span { transition: none; }
+}

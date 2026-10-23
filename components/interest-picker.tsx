@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { TOPIC_OPTIONS, type TopicValue } from "../lib/topics";
 import { STORAGE_KEYS } from "../lib/client-storage";
 import { track } from "../lib/analytics";
+import { PushReminderToggle } from "./push-reminder-toggle";
 
 export function InterestPicker({ day }: { day: string }) {
   const router = useRouter();
@@ -63,6 +64,8 @@ export function InterestPicker({ day }: { day: string }) {
         })}
       </div>
 
+      <PushReminderToggle />
+
       <div className="selection-footer">
         <p aria-live="polite">
           {selected.length < 2
@@ -81,4 +84,3 @@ export function InterestPicker({ day }: { day: string }) {
     </div>
   );
 }
-

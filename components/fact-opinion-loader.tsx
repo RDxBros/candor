@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import type { FactOpinionRound, FactOpinionStoryOption } from "../lib/fact-opinion-content";
+import type { TopicValue } from "../lib/topics";
 
 const FactOpinionGame = dynamic(
   () => import("./fact-opinion-game").then((module) => module.FactOpinionGame),
@@ -13,6 +14,9 @@ export function FactOpinionLoader(props: {
   story: FactOpinionStoryOption;
   currentDay: string;
   mode: "scored" | "practice";
+  selectedTopics: TopicValue[];
+  topicFallback: boolean;
+  dayOverride?: string;
 }) {
   return <FactOpinionGame {...props} />;
 }

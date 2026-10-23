@@ -2,7 +2,7 @@ export const ANALYTICS_EVENT_NAMES = [
   "landing_viewed", "app_opened", "screen_viewed", "story_opened", "story_left",
   "story_completed", "section_opened", "section_visible", "filter_used", "extend_tapped", "round_selected",
   "game_started", "game_completed", "badge_earned", "comment_posted", "comment_flagged",
-  "install_prompt_shown", "error_shown", "app_backgrounded"
+  "install_prompt_shown", "reminder_toggled", "reminder_sent", "reminder_opened", "error_shown", "app_backgrounded"
 ] as const;
 
 export type AnalyticsEventName = typeof ANALYTICS_EVENT_NAMES[number];
@@ -26,13 +26,16 @@ export const ANALYTICS_SCHEMAS: Record<AnalyticsEventName, Schema> = {
   section_visible: { story_id: required(short()), section: required(oneOf("sources", "whats_different")) },
   filter_used: { category: required(short(80)) },
   extend_tapped: { confirmed: required(bool) },
-  round_selected: { game_type: required(oneOf("lean_guess", "fact_opinion")), story_id: required(short()), mode: required(oneOf("scored", "practice")) },
+  round_selected: { game_type: required(oneOf("lean_guess", "fact_opinion")), story_id: required(short()), mode: required(oneOf("scored", "practice")), topic_fallback: required(bool) },
   game_started: { game_type: required(oneOf("lean_guess", "fact_opinion")), mode: required(oneOf("scored", "practice")) },
   game_completed: { game_type: required(oneOf("lean_guess", "fact_opinion")), mode: required(oneOf("scored", "practice")), answers_count: required(integer(100)), correct_count: required(integer(100)), duration_ms: required(integer(86_400_000)), moves: integer(10_000) },
   badge_earned: { badge_id: required(short(80)) },
   comment_posted: { story_id: required(short()) },
   comment_flagged: { story_id: required(short()) },
   install_prompt_shown: { platform: required(oneOf("ios", "android")) },
+  reminder_toggled: { enabled: required(bool), result: required(oneOf("subscribed", "unsubscribed", "denied", "unsupported", "error")) },
+  reminder_sent: { content_day: required(short(20)), result: required(oneOf("sent", "expired", "failed")) },
+  reminder_opened: { content_day: required(short(20)) },
   error_shown: { error_type: required(oneOf("load_failed", "save_failed", "network", "unknown")), screen: required(oneOf("landing", "onboarding", "digest", "story", "caught_up", "games_hub", "game_home", "game_picker", "game_round", "game_result", "badges", "menu")) },
   app_backgrounded: { active_ms: required(integer(86_400_000)) }
 };
@@ -75,4 +78,3 @@ export function prepareAnalyticsProperties(
   if (result.ok && environment === "production") result.droppedKeys.forEach((key) => warn(eventName, key));
   return result;
 }
-

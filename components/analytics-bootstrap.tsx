@@ -27,13 +27,23 @@ export function AnalyticsBootstrap() {
   useEffect(() => {
     function start() {
       analyticsContext();
-      if (sessionStorage.getItem("candor:app-opened") !== "1") {
+      const url = new URL(window.location.href);
+      const reminderOpen = url.searchParams.get("src") === "reminder";
+      const shouldLogOpen = reminderOpen || sessionStorage.getItem("candor:app-opened") !== "1";
+      if (reminderOpen) {
+        url.searchParams.delete("src");
+        window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
+      }
+      if (shouldLogOpen) {
         sessionStorage.setItem("candor:app-opened", "1");
-        const requestedDay = new URLSearchParams(window.location.search).get("day");
+        const requestedDay = url.searchParams.get("day");
         const query = requestedDay ? `?day=${encodeURIComponent(requestedDay)}` : "";
         void fetch(`/api/content-day${query}`, { cache: "no-store" })
           .then((response) => response.ok ? response.json() as Promise<{ day: string }> : Promise.reject())
-          .then(({ day }) => track("app_opened", { content_day: day, display_mode: displayMode(), source: "direct" }))
+          .then(({ day }) => {
+            track("app_opened", { content_day: day, display_mode: displayMode(), source: reminderOpen ? "reminder" : "direct" });
+            if (reminderOpen) track("reminder_opened", { content_day: day });
+          })
           .catch(() => undefined);
       }
       if (!document.hidden) foregroundStarted.current = performance.now();
@@ -56,4 +66,3 @@ export function AnalyticsBootstrap() {
   }, [pathname]);
   return null;
 }
-

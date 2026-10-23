@@ -47,4 +47,18 @@ test("section_visible accepts only the two allowed section names", () => {
   assert.deepEqual(validateAnalyticsProperties("section_visible", { story_id: "story-1", section: "summary" }, "strict"), { ok: false, error: "invalid_properties", key: "section" });
   assert.deepEqual(validateAnalyticsProperties("section_visible", { story_id: "story-1", section: "sources", scroll_y: 400 }, "strict"), { ok: false, error: "invalid_properties", key: "scroll_y" });
 });
+test("round_selected accepts topic_fallback only as a boolean", () => {
+  const base = { game_type: "lean_guess", story_id: "story-1", mode: "scored", topic_fallback: false };
+  assert.equal(validateAnalyticsProperties("round_selected", base, "strict").ok, true);
+  assert.deepEqual(validateAnalyticsProperties("round_selected", { ...base, topic_fallback: "false" }, "strict"), { ok: false, error: "invalid_properties", key: "topic_fallback" });
+  assert.deepEqual(validateAnalyticsProperties("game_started", { game_type: "lean_guess", mode: "scored", topic_fallback: false }, "strict"), { ok: false, error: "invalid_properties", key: "topic_fallback" });
+});
 
+test("reminder events use the strict allowlist", () => {
+  assert.equal(validateAnalyticsProperties("reminder_toggled", { enabled: true, result: "subscribed" }, "strict").ok, true);
+  assert.equal(validateAnalyticsProperties("reminder_sent", { content_day: "day2", result: "sent" }, "strict").ok, true);
+  assert.equal(validateAnalyticsProperties("reminder_opened", { content_day: "day2" }, "strict").ok, true);
+  assert.deepEqual(validateAnalyticsProperties("reminder_toggled", { enabled: true, result: "maybe" }, "strict"), { ok: false, error: "invalid_properties", key: "result" });
+  assert.deepEqual(validateAnalyticsProperties("reminder_sent", { content_day: "day2", result: "pending" }, "strict"), { ok: false, error: "invalid_properties", key: "result" });
+  assert.deepEqual(validateAnalyticsProperties("reminder_opened", { content_day: "day2", endpoint: "secret" }, "strict"), { ok: false, error: "invalid_properties", key: "endpoint" });
+});

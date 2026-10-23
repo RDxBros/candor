@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import type { LeanGameCard } from "../lib/lean-game-pool";
+import type { TopicValue } from "../lib/topics";
 
 const LeanGuessingGame = dynamic(
   () => import("./lean-guessing-game").then((module) => module.LeanGuessingGame),
@@ -19,6 +20,9 @@ export function LeanGameLoader(props: {
   currentDay: string;
   preferredStoryId?: string;
   mode: "scored" | "practice";
+  selectedTopics: TopicValue[];
+  topicFallback: boolean;
+  dayOverride?: string;
 }) {
   return <LeanGuessingGame {...props} />;
 }

@@ -3,6 +3,7 @@ import test from "node:test";
 import { isAvailableGameDay, isGameStoryEligible, qualifyingStoryExcerpts } from "./lean-game-pool-rules.ts";
 
 test("the shared game pool never includes folders after the active day", () => {
+  assert.equal(isAvailableGameDay("day2", "day1"), false);
   assert.equal(isAvailableGameDay("day1", "day2"), true);
   assert.equal(isAvailableGameDay("day2", "day2"), true);
   assert.equal(isAvailableGameDay("day3", "day2"), false);

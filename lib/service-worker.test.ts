@@ -31,3 +31,14 @@ test("navigations and API reads use the network before an offline cache fallback
   assert.match(worker, /request\.mode === "navigate"[\s\S]*networkFirst\(request, DATA_CACHE, "\/offline"\)/);
   assert.doesNotMatch(worker, /const SHELL = \[[^\]]*"\/"/);
 });
+
+
+test("push notifications show and clicks focus or open the reminder URL", async () => {
+  const worker = await readFile(new URL("../public/sw.js", import.meta.url), "utf8");
+  assert.match(worker, /addEventListener\("push"/);
+  assert.match(worker, /showNotification\(title/);
+  assert.match(worker, /addEventListener\("notificationclick"/);
+  assert.match(worker, /event\.waitUntil/);
+  assert.match(worker, /\/?src=reminder/);
+  assert.match(worker, /clients\.openWindow/);
+});

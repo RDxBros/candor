@@ -53,3 +53,45 @@ explicitly set before that deployment.
   deployment, and use **Rollback**. A rollback restores that deployment's code and
   environment snapshot; it does not undo the `app_config` database value, so set
   `current_day` back separately if needed.
+
+## Daily-drop reminders
+
+Run `supabase/reminders.sql` once. Generate one long-lived VAPID key pair:
+
+```powershell
+npx web-push generate-vapid-keys --json
+```
+
+Changing that pair later invalidates existing browser subscriptions. Add these to
+both Vercel **Production** and **Preview** if reminder testing is needed in both:
+
+- `NEXT_PUBLIC_VAPID_PUBLIC_KEY` (public; bundled into client JavaScript)
+- `VAPID_PRIVATE_KEY` (server only)
+- `VAPID_SUBJECT=mailto:YOUR_REAL_EMAIL` (server only)
+- `CRON_SECRET` (server only; use a long random value)
+
+The production Supabase cron must call only the Vercel domain labeled Production.
+Create `candor_production_url` and `candor_cron_secret` directly in Supabase Vault
+using the temporary SQL Editor snippet in `docs/daily-reminders.md`. Then run
+`supabase/reminders-cron.sql` unchanged and inspect `cron.job` to confirm both jobs
+are active. The tracked cron file contains no URL or secret value. Preview
+deployments do not get their own scheduled job.
+
+Environment exposure summary:
+
+- Server/runtime: `SUPABASE_URL`, `SUPABASE_SECRET_KEY` (or legacy
+  `SUPABASE_SERVICE_ROLE_KEY`), `CURRENT_DAY`, `ALLOW_DAY_OVERRIDE`, `NOINDEX`,
+  `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `CRON_SECRET`.
+- Client bundle: `NEXT_PUBLIC_VAPID_PUBLIC_KEY` and the generated
+  `NEXT_PUBLIC_CANDOR_SW_VERSION` only.
+
+NEXT_PUBLIC_VAPID_PUBLIC_KEY is captured at build time for the browser toggle, so
+changing it requires a redeploy. VAPID_PRIVATE_KEY, VAPID_SUBJECT, and
+CRON_SECRET are read only by the server route at invocation time; Vercel still
+attaches environment values to deployments, so redeploy after changing them.
+- Local generation only: `GEMINI_API_KEY`, `GEMINI_MODEL`,
+  `GEMINI_MAX_ATTEMPTS`, `GEMINI_RETRY_BASE_MS`.
+- Platform-provided: `NODE_ENV`, `NEXT_RUNTIME`, and `VERCEL_DEPLOYMENT_ID`.
+
+`CRON_SECRET` and `VAPID_PRIVATE_KEY` are referenced only by Node.js route code;
+Next.js exposes only variables prefixed with `NEXT_PUBLIC_` to client bundles.
