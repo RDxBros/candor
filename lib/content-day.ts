@@ -9,7 +9,7 @@ function fallbackCurrentDay() {
   return configured && CONTENT_DAY_PATTERN.test(configured) ? configured : FALLBACK_CURRENT_DAY;
 }
 
-const readCurrentDay = unstable_cache(async () => {
+async function readCurrentDayFromSource() {
   const fallback = fallbackCurrentDay();
   if (!isSupabaseConfigured()) return fallback;
 
@@ -24,7 +24,9 @@ const readCurrentDay = unstable_cache(async () => {
     console.warn("[config] Unable to read current_day; using the deployment fallback.", error instanceof Error ? error.message : "unknown error");
     return fallback;
   }
-}, ["candor-current-day"], { revalidate: 60 });
+}
+
+const readCurrentDay = unstable_cache(readCurrentDayFromSource, ["candor-current-day"], { revalidate: 60 });
 
 export function isDayOverrideAllowed() {
   return process.env.NODE_ENV !== "production" || process.env.ALLOW_DAY_OVERRIDE === "1";
@@ -32,6 +34,10 @@ export function isDayOverrideAllowed() {
 
 export async function getCurrentDay() {
   return readCurrentDay();
+}
+
+export async function getCurrentDayForInstrumentation() {
+  return readCurrentDayFromSource();
 }
 
 export async function resolveContentDay(requestedDay?: string | null) {

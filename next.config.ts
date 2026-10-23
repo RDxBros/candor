@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
+import { randomUUID } from "node:crypto";
 import { networkInterfaces } from "node:os";
+
+const serviceWorkerVersion = process.env.VERCEL_DEPLOYMENT_ID?.trim() || randomUUID();
 
 const localNetworkOrigins = Object.values(networkInterfaces())
   .flatMap((interfaces) => interfaces ?? [])
@@ -7,6 +10,9 @@ const localNetworkOrigins = Object.values(networkInterfaces())
   .map((address) => address.address);
 
 const nextConfig: NextConfig = {
+  env: {
+    NEXT_PUBLIC_CANDOR_SW_VERSION: serviceWorkerVersion
+  },
   devIndicators: false,
   allowedDevOrigins: process.env.NODE_ENV === "development" ? localNetworkOrigins : [],
   outputFileTracingIncludes: {

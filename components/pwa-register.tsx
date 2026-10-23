@@ -24,7 +24,9 @@ export function PwaRegister() {
     }
     const requestedDay = new URLSearchParams(window.location.search).get("day");
     const query = requestedDay ? `?day=${encodeURIComponent(requestedDay)}` : "";
-    navigator.serviceWorker.register("/sw.js").then(() => {
+    const version = process.env.NEXT_PUBLIC_CANDOR_SW_VERSION || "development";
+    navigator.serviceWorker.register(`/sw.js?v=${encodeURIComponent(version)}`, { updateViaCache: "none" }).then((registration) => {
+      void registration.update().catch(() => undefined);
       fetch(`/api/stories${query}`).catch(() => undefined);
     }).catch(() => undefined);
   }, []);

@@ -136,10 +136,12 @@ test("scored and practice submissions carry card position while scored also carr
 });
 
 test("Explorer and Bullseye use the same unlock celebration component", async () => {
-  const [sources, game] = await Promise.all([
+  const [sources, game, celebration] = await Promise.all([
     readFile(new URL("../components/tracked-source-link.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../components/lean-guessing-game.tsx", import.meta.url), "utf8")
+    readFile(new URL("../components/lean-guessing-game.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/badge-unlock-celebration.tsx", import.meta.url), "utf8")
   ]);
   assert.match(sources, /<BadgeUnlockCelebration badgeId="explorer"/);
   assert.match(game, /<BadgeUnlockCelebration badgeId="sharp_eye"/);
+  assert.match(celebration, /className="primary-button badge-unlock-dismiss"/);
 });

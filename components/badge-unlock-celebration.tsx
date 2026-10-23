@@ -28,7 +28,7 @@ export function BadgeUnlockCelebration({ badgeId, onDismiss, autoDismissMs = 5_0
         <h2>{definition.name}</h2>
         <p>{definition.shortDescription}</p>
       </div>
-      <button type="button" className="text-action badge-unlock-dismiss" onClick={onDismiss}>Got it</button>
+      <button type="button" className="primary-button badge-unlock-dismiss" onClick={onDismiss}>Got it</button>
     </section>
   </div>;
 }
