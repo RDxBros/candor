@@ -34,9 +34,14 @@ test("navigations and API reads use the network before an offline cache fallback
 
 
 test("push notifications show and clicks focus or open the reminder URL", async () => {
-  const worker = await readFile(new URL("../public/sw.js", import.meta.url), "utf8");
+  const [worker, route] = await Promise.all([
+    readFile(new URL("../public/sw.js", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/cron/reminders/route.ts", import.meta.url), "utf8")
+  ]);
   assert.match(worker, /addEventListener\("push"/);
   assert.match(worker, /showNotification\(title/);
+  assert.match(route, /title: "Today's drop is ready\.", body: ""/);
+  assert.doesNotMatch(route, /title: "Candor"/);
   assert.match(worker, /addEventListener\("notificationclick"/);
   assert.match(worker, /event\.waitUntil/);
   assert.match(worker, /\/?src=reminder/);

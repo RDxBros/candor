@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
   if (dryRun) return NextResponse.json({ ok: true, dry_run: true, subscriptions: subscriptions.length, eligible: subscriptions.length, already_sent: subscriptions.length - pending.length, would_send: pending.length, content_day: contentDay, local_date: localDate });
 
   const started = Date.now();
-  const payload = JSON.stringify({ title: "Candor", body: "Today's drop is ready." });
+  const payload = JSON.stringify({ title: "Today's drop is ready.", body: "" });
   const vapidDetails = { subject, publicKey, privateKey };
   const results = await mapWithConcurrency(pending, REMINDER_CONCURRENCY, async (subscription) => {
     if (Date.now() - started > REMINDER_TIME_BUDGET_MS) return "budget_skipped" as const;

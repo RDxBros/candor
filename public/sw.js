@@ -72,8 +72,8 @@ self.addEventListener("fetch", (event) => {
 self.addEventListener("push", (event) => {
   let payload = {};
   try { payload = event.data ? event.data.json() : {}; } catch { payload = {}; }
-  const title = typeof payload.title === "string" ? payload.title : "Candor";
-  const body = typeof payload.body === "string" ? payload.body : "Today's drop is ready.";
+  const title = typeof payload.title === "string" ? payload.title : "Today's drop is ready.";
+  const body = typeof payload.body === "string" ? payload.body : "";
   event.waitUntil(self.registration.showNotification(title, {
     body,
     icon: "/icons/icon-192.png",
