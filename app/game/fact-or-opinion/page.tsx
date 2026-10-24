@@ -10,7 +10,7 @@ import { parseSelectedTopics } from "../../../lib/topics";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-type SearchParams = Promise<{ day?: string | string[]; mode?: string | string[]; story?: string | string[]; round?: string | string[]; topics?: string | string[]; topic_fallback?: string | string[] }>;
+type SearchParams = Promise<{ day?: string | string[]; mode?: string | string[]; story?: string | string[]; round?: string | string[]; pick?: string | string[]; topics?: string | string[]; topic_fallback?: string | string[] }>;
 
 export default async function FactOpinionPage({ searchParams }: { searchParams: SearchParams }) {
   const query = await searchParams;
@@ -18,6 +18,8 @@ export default async function FactOpinionPage({ searchParams }: { searchParams: 
   const currentDay = await resolveContentDay(requestedDay);
   const requestedMode = Array.isArray(query.mode) ? query.mode[0] : query.mode;
   const mode = requestedMode === "scored" || requestedMode === "practice" ? requestedMode : null;
+  const requestedPickerMode = Array.isArray(query.pick) ? query.pick[0] : query.pick;
+  const initialPickerMode = requestedPickerMode === "scored" || requestedPickerMode === "practice" ? requestedPickerMode : undefined;
   const selectedStoryId = Array.isArray(query.story) ? query.story[0] : query.story;
   const { rounds, stories } = await loadFactOpinionContent(currentDay);
   const selectedTopics = parseSelectedTopics(query.topics);
@@ -45,6 +47,6 @@ export default async function FactOpinionPage({ searchParams }: { searchParams: 
       selectedTopics={selectedTopics}
       topicFallback={topicFallback}
       dayOverride={requestedDay}
-    /> : <FactOpinionEntry rounds={rounds} stories={stories} dayOverride={requestedDay} />}
+    /> : <FactOpinionEntry rounds={rounds} stories={stories} dayOverride={requestedDay} initialPickerMode={initialPickerMode} />}
   </main>;
 }

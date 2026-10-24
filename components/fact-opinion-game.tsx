@@ -371,9 +371,19 @@ export function FactOpinionGame({ rounds, story, currentDay, mode, selectedTopic
   }
 
   function finish() { if (saved) clearRoundState(); router.push("/game"); }
+  function pickerHref(nextMode: "scored" | "practice") {
+    const params = new URLSearchParams({ pick: nextMode });
+    if (dayOverride) params.set("day", dayOverride);
+    if (selectedTopics.length) params.set("topics", selectedTopics.join(","));
+    return `/game/fact-or-opinion?${params}`;
+  }
   function playAgain() {
     if (!saved) return;
     clearRoundState();
+    if (mode === "scored") {
+      router.push(pickerHref("scored"));
+      return;
+    }
     const params = new URLSearchParams({ mode, story: story.id, round: createUuid() });
     if (dayOverride) params.set("day", dayOverride);
     if (selectedTopics.length) params.set("topics", selectedTopics.join(","));
@@ -388,7 +398,14 @@ export function FactOpinionGame({ rounds, story, currentDay, mode, selectedTopic
   }
 
   if (initializing) return <section className="empty-state fact-opinion-empty" role="status"><p>Opening the round…</p></section>;
-  if (!round) return <section className="empty-state fact-opinion-empty"><h1>No round available</h1><p>{mode === "scored" ? "You may have played every reviewed round." : "No reviewed practice rounds are available yet."}</p></section>;
+  if (!round) return <section className="empty-state fact-opinion-empty">
+    <h1>No round available</h1>
+    <p>{mode === "scored" ? "You may have played every reviewed round." : "No reviewed practice rounds are available yet."}</p>
+    <div className="fact-opinion-empty-actions">
+      <button className="primary-button" type="button" onClick={() => router.push(pickerHref(mode))}>Choose another story</button>
+      <button className="secondary-button" type="button" onClick={() => router.push("/game")}>All games</button>
+    </div>
+  </section>;
 
   const resultOrder = orderedFactOpinionResults(round, placements, order);
 

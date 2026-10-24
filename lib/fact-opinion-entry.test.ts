@@ -38,3 +38,16 @@ test("games hub order and labels come from level-based config", async () => {
   assert.match(source, /orderedGameCatalog\(\)\.map/);
   assert.doesNotMatch(source, /<strong>Spot the Lean<\/strong>|<strong>Fact or Opinion<\/strong>/);
 });
+
+test("a replayed scored round returns to the story picker instead of reopening an exhausted story", async () => {
+  const [game, page, entry] = await Promise.all([
+    readFile(new URL("../components/fact-opinion-game.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/game/fact-or-opinion/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/fact-opinion-entry.tsx", import.meta.url), "utf8")
+  ]);
+  assert.match(game, /mode === "scored"[\s\S]*router\.push\(pickerHref\("scored"\)\)/);
+  assert.match(game, />Choose another story<\/button>/);
+  assert.match(game, />All games<\/button>/);
+  assert.match(page, /initialPickerMode=\{initialPickerMode\}/);
+  assert.match(entry, /useState<PickerMode \| null>\(initialPickerMode \?\? null\)/);
+});

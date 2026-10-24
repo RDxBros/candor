@@ -438,7 +438,7 @@ export function LeanGuessingGame({ cards, currentDay, preferredStoryId, mode, se
       : recordGameAttempt({ day: current.day, storyId: current.storyId, sourceId: current.sourceId, sourceKey: attempt.source_key, roundId: roundId!, cardPosition, guessedLean, inputMethod, responseMs: attempt.response_ms ?? 0 })
         .then((saved) => {
           if (saved) markLocalGameAttemptSynced(current.storyId, attempt.source_key, current.sourceId);
-          else setSyncMessage("Your answer is saved on this device and will sync when the connection returns.");
+          else setSyncMessage("Your answer is saved on this device, but it couldn’t sync yet.");
         });
     pendingWrites.current.push(write);
   }

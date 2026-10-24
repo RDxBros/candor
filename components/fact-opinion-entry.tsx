@@ -16,13 +16,14 @@ import { track } from "../lib/analytics";
 type Attempt = { content_round_id: string; is_correct: boolean };
 type PickerMode = "scored" | "practice";
 
-export function FactOpinionEntry({ rounds, stories, dayOverride }: {
+export function FactOpinionEntry({ rounds, stories, dayOverride, initialPickerMode }: {
   rounds: FactOpinionRound[];
   stories: FactOpinionStoryOption[];
   dayOverride?: string;
+  initialPickerMode?: PickerMode;
 }) {
   const [attempts, setAttempts] = useState<Attempt[] | null>(null);
-  const [pickerMode, setPickerMode] = useState<PickerMode | null>(null);
+  const [pickerMode, setPickerMode] = useState<PickerMode | null>(initialPickerMode ?? null);
   const [visibleCount, setVisibleCount] = useState<number>(FACT_OPINION_CONFIG.picker_page_size);
   const [selectedTopics, setSelectedTopics] = useState<TopicValue[] | null>(null);
 

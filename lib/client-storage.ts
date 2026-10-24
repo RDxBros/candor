@@ -301,11 +301,15 @@ export async function recordGameAttempt(input: {
         response_ms: input.responseMs
       })
     });
-    if (!response.ok) return null;
+    if (!response.ok) {
+      console.error(`Unable to save Spot the Lean attempt (${response.status}).`);
+      return null;
+    }
     const payload = await response.json();
     if (payload.user) applyServerUser(payload.user);
     return payload.attempt;
-  } catch {
+  } catch (error) {
+    console.error("Unable to save Spot the Lean attempt.", error);
     return null;
   }
 }

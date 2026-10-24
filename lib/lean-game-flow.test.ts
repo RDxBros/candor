@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { automaticGuessTransition, resumeLockedStory, storySegment } from "./lean-game-flow.ts";
 
@@ -19,4 +20,10 @@ test("resume stays on the first unanswered card and goes to answers after the fi
   assert.deepEqual(resumeLockedStory(cards, 1, (index) => index === 0), { index: 1, phase: "guess" });
   assert.deepEqual(resumeLockedStory(cards, 2, (index) => index < 2), { index: 2, phase: "guess" });
   assert.deepEqual(resumeLockedStory(cards, 2, (index) => index <= 2), { index: 0, phase: "reveal" });
+});
+
+test("a failed save does not claim the connection is offline", async () => {
+  const source = await readFile(new URL("../components/lean-guessing-game.tsx", import.meta.url), "utf8");
+  assert.match(source, /saved on this device, but it couldn.t sync yet/);
+  assert.doesNotMatch(source, /when the connection returns/);
 });
