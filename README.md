@@ -1,6 +1,7 @@
 # Candor story generation
 
 This repository contains the Candor Next.js app and its story-generation pipeline.
+Check out the mvp: https://candor-one.vercel.app/
 
 ## Supabase backend
 
