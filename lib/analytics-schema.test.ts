@@ -62,3 +62,12 @@ test("reminder events use the strict allowlist", () => {
   assert.deepEqual(validateAnalyticsProperties("reminder_sent", { content_day: "day2", result: "pending" }, "strict"), { ok: false, error: "invalid_properties", key: "result" });
   assert.deepEqual(validateAnalyticsProperties("reminder_opened", { content_day: "day2", endpoint: "secret" }, "strict"), { ok: false, error: "invalid_properties", key: "endpoint" });
 });
+
+test("standalone play events require the shared privacy-safe context", () => {
+  const base = { round: 2, ref: "share", is_returning: true, days_since_first_play: 3 };
+  assert.equal(validateAnalyticsProperties("play_landing_viewed", base, "strict").ok, true);
+  assert.equal(validateAnalyticsProperties("play_round_completed", { ...base, score: 2 }, "strict").ok, true);
+  assert.equal(validateAnalyticsProperties("play_share_tapped", { ...base, method: "clipboard" }, "strict").ok, true);
+  assert.deepEqual(validateAnalyticsProperties("play_landing_viewed", { ...base, ref: "bad ref" }, "strict"), { ok: false, error: "invalid_properties", key: "ref" });
+  assert.deepEqual(validateAnalyticsProperties("play_share_tapped", { ...base, method: "email" }, "strict"), { ok: false, error: "invalid_properties", key: "method" });
+});

@@ -120,6 +120,26 @@ async function hydrateStory(file: string): Promise<Story | null> {
   };
 }
 
+export async function getStoryEntryByPath(storyPath: string) {
+  const storiesRoot = path.resolve(process.cwd(), "stories");
+  const normalized = storyPath.replaceAll("\\", "/");
+  if (!normalized.startsWith("stories/")) return null;
+  const segments = normalized.slice("stories/".length).split("/");
+  if (!segments.length || segments.some((segment) => !segment || segment === "." || segment === "..")) return null;
+  const absolutePath = path.join(storiesRoot, ...segments);
+  const relativePath = path.relative(storiesRoot, absolutePath);
+  if (
+    relativePath.startsWith("..") || path.isAbsolute(relativePath) ||
+    !absolutePath.toLowerCase().endsWith(".json") ||
+    absolutePath.toLowerCase().endsWith("_output.json")
+  ) return null;
+
+  const story = await hydrateStory(absolutePath);
+  if (!story) return null;
+  const [day] = relativePath.split(path.sep);
+  return { day, story };
+}
+
 export async function getStories(dayOverride?: string): Promise<{ day: string; stories: Story[] }> {
   await connection();
   const day = await resolveContentDay(dayOverride);

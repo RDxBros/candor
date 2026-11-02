@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   allowedDevOrigins: process.env.NODE_ENV === "development" ? localNetworkOrigins : [],
   outputFileTracingIncludes: {
-    "/*": ["./stories/**/*.json", "./game-content/fact-opinion.json"]
+    "/*": ["./stories/**/*.json", "./game-content/fact-opinion.json", "./game-content/daily-lean/*.json"]
   },
   async headers() {
     return process.env.NOINDEX === "0" ? [] : [{

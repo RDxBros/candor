@@ -1,0 +1,22 @@
+[
+  {
+    "round": 1,
+    "story_path": "stories/day1/news_&_society/001.json",
+    "reviewed_by_human": false
+  },
+  {
+    "round": 2,
+    "story_path": "stories/day1/news_&_society/002.json",
+    "reviewed_by_human": false
+  },
+  {
+    "round": 3,
+    "story_path": "stories/day1/news_&_society/003.json",
+    "reviewed_by_human": false
+  },
+  {
+    "round": 4,
+    "story_path": "stories/day2/news_&_society/003.json",
+    "reviewed_by_human": false
+  }
+]

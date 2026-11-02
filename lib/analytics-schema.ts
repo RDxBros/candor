@@ -2,7 +2,8 @@ export const ANALYTICS_EVENT_NAMES = [
   "landing_viewed", "app_opened", "screen_viewed", "story_opened", "story_left",
   "story_completed", "section_opened", "section_visible", "filter_used", "extend_tapped", "round_selected",
   "game_started", "game_completed", "badge_earned", "comment_posted", "comment_flagged",
-  "install_prompt_shown", "reminder_toggled", "reminder_sent", "reminder_opened", "error_shown", "app_backgrounded"
+  "install_prompt_shown", "reminder_toggled", "reminder_sent", "reminder_opened", "error_shown", "app_backgrounded",
+  "play_landing_viewed", "play_round_started", "play_round_completed", "play_share_tapped", "play_full_app_tapped"
 ] as const;
 
 export type AnalyticsEventName = typeof ANALYTICS_EVENT_NAMES[number];
@@ -14,6 +15,12 @@ const oneOf = (...values: string[]): Rule => ({ validate: (v) => typeof v === "s
 const bool: Rule = { validate: (v) => typeof v === "boolean" };
 const integer = (max = Number.MAX_SAFE_INTEGER): Rule => ({ validate: (v) => Number.isInteger(v) && Number(v) >= 0 && Number(v) <= max });
 const required = (rule: Rule): Rule => ({ ...rule, required: true });
+const playBase = {
+  round: required(integer(10_000)),
+  ref: required({ validate: (v) => typeof v === "string" && /^[a-z0-9_-]{1,32}$/.test(v) }),
+  is_returning: required(bool),
+  days_since_first_play: required(integer(100_000))
+};
 
 export const ANALYTICS_SCHEMAS: Record<AnalyticsEventName, Schema> = {
   landing_viewed: {},
@@ -37,7 +44,12 @@ export const ANALYTICS_SCHEMAS: Record<AnalyticsEventName, Schema> = {
   reminder_sent: { content_day: required(short(20)), result: required(oneOf("sent", "expired", "failed")) },
   reminder_opened: { content_day: required(short(20)) },
   error_shown: { error_type: required(oneOf("load_failed", "save_failed", "network", "unknown")), screen: required(oneOf("landing", "onboarding", "digest", "story", "caught_up", "games_hub", "game_home", "game_picker", "game_round", "game_result", "badges", "menu")) },
-  app_backgrounded: { active_ms: required(integer(86_400_000)) }
+  app_backgrounded: { active_ms: required(integer(86_400_000)) },
+  play_landing_viewed: { ...playBase },
+  play_round_started: { ...playBase },
+  play_round_completed: { ...playBase, score: required(integer(3)) },
+  play_share_tapped: { ...playBase, method: required(oneOf("native", "clipboard")) },
+  play_full_app_tapped: { ...playBase }
 };
 
 export type AnalyticsValidationMode = "strict" | "sanitize";

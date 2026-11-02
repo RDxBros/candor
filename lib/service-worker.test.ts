@@ -32,6 +32,12 @@ test("navigations and API reads use the network before an offline cache fallback
   assert.doesNotMatch(worker, /const SHELL = \[[^\]]*"\/"/);
 });
 
+test("the standalone play route does not prefetch day-specific story data", async () => {
+  const registration = await readFile(new URL("../components/pwa-register.tsx", import.meta.url), "utf8");
+  assert.match(registration, /!pathname\.startsWith\("\/play"\)/);
+  assert.match(registration, /fetch\(`\/api\/stories/);
+});
+
 
 test("push notifications show and clicks focus or open the reminder URL", async () => {
   const [worker, route] = await Promise.all([

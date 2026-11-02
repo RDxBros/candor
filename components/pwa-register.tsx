@@ -1,8 +1,10 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 export function PwaRegister() {
+  const pathname = usePathname();
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
     if (process.env.NODE_ENV !== "production") {
@@ -27,8 +29,8 @@ export function PwaRegister() {
     const version = process.env.NEXT_PUBLIC_CANDOR_SW_VERSION || "development";
     navigator.serviceWorker.register(`/sw.js?v=${encodeURIComponent(version)}`, { updateViaCache: "none" }).then((registration) => {
       void registration.update().catch(() => undefined);
-      fetch(`/api/stories${query}`).catch(() => undefined);
+      if (!pathname.startsWith("/play")) fetch(`/api/stories${query}`).catch(() => undefined);
     }).catch(() => undefined);
-  }, []);
+  }, [pathname]);
   return null;
 }

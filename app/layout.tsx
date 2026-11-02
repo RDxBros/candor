@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { PwaRegister } from "../components/pwa-register";
 import { AnonymousUserBootstrap } from "../components/anonymous-user-bootstrap";
-import { InstallPrompt } from "../components/install-prompt";
+import { RouteInstallPrompt } from "../components/route-install-prompt";
 import { AnalyticsBootstrap } from "../components/analytics-bootstrap";
 import "./globals.css";
 
@@ -39,7 +39,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <AnonymousUserBootstrap />
         <AnalyticsBootstrap />
         <PwaRegister />
-        <InstallPrompt />
+        <RouteInstallPrompt />
         {children}
       </body>
     </html>
