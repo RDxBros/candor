@@ -56,4 +56,5 @@ test("same instant can select different local rounds", () => {
 
 test("play labels show the player's calendar date", () => {
   assert.equal(formatPlayDateLabel("2026-11-02"), "Nov 2, 2026");
+  assert.equal(formatPlayDateLabel("2026-11-07"), "Nov 7, 2026");
 });

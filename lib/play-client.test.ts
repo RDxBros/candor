@@ -100,6 +100,7 @@ test("play landing uses the concise subtitle and lets the story card grow", () =
   assert.doesNotMatch(component, /Can you tell who leans which way/);
   assert.match(component, /Play today’s round/);
   assert.match(component, />No account needed<\/p>/);
+  assert.match(component, /Day \{round\.round\} · \{roundDateLabel\}/);
   assert.doesNotMatch(component, /Published \{formatStoryDate/);
   assert.match(styles, /\.cardFan > div[\s\S]*width: fit-content/);
   assert.doesNotMatch(styles, /\.cardFan strong \{[^}]*max-height/);

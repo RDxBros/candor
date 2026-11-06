@@ -154,6 +154,20 @@ export function DailyLeanGame({
     if (screen === "landing" && eventBase) track("play_landing_viewed", eventBase);
   }, [screen, eventBase]);
 
+  useEffect(() => {
+    if (screen !== "landing" || !nextUnlockAt || new URL(window.location.href).searchParams.has("preview_round")) return;
+    let refreshed = false;
+    const refreshIfUnlocked = () => {
+      if (refreshed || document.hidden || Date.now() < nextUnlockAt) return;
+      refreshed = true;
+      router.refresh();
+    };
+    const timer = window.setTimeout(refreshIfUnlocked, Math.max(0, nextUnlockAt - Date.now()));
+    const onVisible = () => { if (!document.hidden) refreshIfUnlocked(); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => { window.clearTimeout(timer); document.removeEventListener("visibilitychange", onVisible); };
+  }, [screen, nextUnlockAt, router]);
+
   const persist = useCallback((state: PlayStoredRound) => {
     if (!round) return;
     try { localStorage.setItem(playRoundStorageKey(round.round), JSON.stringify(state)); }
@@ -350,7 +364,7 @@ function Landing({ round, roundDateLabel, completed, onStart, exiting, onAbout }
     <div className={styles.cardFan} aria-hidden="true">
       <span /><span /><div><small>Round story</small><strong>{round.headline}</strong><i><b /><b /><b /></i></div><em>Today's drop</em>
     </div>
-    {roundDateLabel ? <div className={styles.roundDate}>{roundDateLabel}</div> : null}
+    {roundDateLabel ? <div className={styles.roundDate}>Day {round.round} · {roundDateLabel}</div> : null}
     <ol className={styles.howList}>
       <li><span>1</span><b>Three excerpts, one story.</b></li>
       <li><span>2</span><b>Swipe to call each lean.</b></li>
