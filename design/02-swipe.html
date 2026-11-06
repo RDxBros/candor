@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>A Buzzer: swipe</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="margin:0;background:#ddd;display:flex;justify-content:center;padding:24px">
+
+
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#111}a:hover{color:#0E7C74}
+</style>
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F2F2F0; color: #111111; font-family: 'Bricolage Grotesque', system-ui, sans-serif; display: flex; flex-direction: column; gap: 16px; padding: 20px 20px 28px; overflow: hidden">
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <div style="font-size: 22px; font-weight: 800; letter-spacing: -0.03em">candor</div>
+    <div style="display: flex; align-items: center; gap: 6px; background: #111111; color: #D7FF3F; border-radius: 999px; padding: 7px 13px; font-size: 15px; font-weight: 800">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg>
+      <span>3-day streak</span>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 6px">
+    <div style="font-size: 13px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase">SPOT THE LEAN #12</div>
+    <h1 style="margin: 0; font-size: 44px; line-height: 0.95; font-weight: 800; letter-spacing: -0.035em">Who wrote this?</h1>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px" aria-label="Excerpt 2 of 3">
+    <div style="height: 8px; border-radius: 4px; background: #111111"></div>
+    <div style="height: 8px; border-radius: 4px; background: #111111; box-shadow: inset 0 0 0 2px #111111, inset 0 0 0 4px #D7FF3F"></div>
+    <div style="height: 8px; border-radius: 4px; border: 2px solid #111111; box-sizing: border-box"></div>
+  </div>
+
+  <div style="align-self: flex-start; font-size: 14px; font-weight: 600; border: 2px solid #111111; border-radius: 999px; padding: 5px 12px; background: #FFFFFF">Story: [Today's story topic]</div>
+
+  <div style="position: relative; flex-grow: 1; min-height: 0">
+    <div style="position: absolute; left: 22px; right: 2px; top: 22px; bottom: 6px; background: #FFFFFF; border: 3px solid #111111; border-radius: 18px"></div>
+    <div style="position: absolute; left: 12px; right: 10px; top: 12px; bottom: 12px; background: #FFFFFF; border: 3px solid #111111; border-radius: 18px"></div>
+    <div style="position: absolute; left: 0; right: 18px; top: 0; bottom: 18px; background: #FFFFFF; border: 3px solid #111111; border-radius: 18px; box-shadow: 8px 8px 0 #22D3C5; transform: translateX(-30px) rotate(-7deg); display: flex; flex-direction: column; justify-content: space-between; padding: 22px; box-sizing: border-box">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start">
+        <div style="font-size: 13px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase">Excerpt 2 of 3</div>
+        <div style="transform: rotate(9deg); border: 3px solid #111111; background: #22D3C5; color: #111111; border-radius: 8px; padding: 2px 10px; font-size: 20px; font-weight: 800; letter-spacing: 0.04em">LEFT</div>
+      </div>
+      <p style="margin: 0; font-size: 21px; line-height: 1.35; font-weight: 600">[Two or three sentences from one outlet's coverage of today's story. The outlet's name stays hidden until the reveal.]</p>
+      <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #3D3D3B">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+        <span>Source hidden</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+    <button type="button" style="min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: #22D3C5; color: #111111; border: 3px solid #111111; border-radius: 14px; box-shadow: 4px 4px 0 #111111; transform: translateY(-4px) scale(1.04); font-family: inherit; font-size: 17px; font-weight: 800; cursor: pointer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>
+      <span>Left</span>
+    </button>
+    <button type="button" style="min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: #B9A6FF; color: #111111; border: 3px solid #111111; border-radius: 14px; box-shadow: 4px 4px 0 #111111; font-family: inherit; font-size: 17px; font-weight: 800; cursor: pointer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg>
+      <span>Center</span>
+    </button>
+    <button type="button" style="min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: #FFB224; color: #111111; border: 3px solid #111111; border-radius: 14px; box-shadow: 4px 4px 0 #111111; font-family: inherit; font-size: 17px; font-weight: 800; cursor: pointer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+      <span>Right</span>
+    </button>
+  </div>
+  <div style="text-align: center; font-size: 14px; font-weight: 600; color: #3D3D3B">Swipe the card or tap a button</div>
+</div>
+
+</body>
+</html>

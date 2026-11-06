@@ -14,21 +14,22 @@ export function AnonymousUserBootstrap() {
   useEffect(() => {
     const url = new URL(window.location.href);
     if (url.searchParams.get("internal") === "1") {
-      localStorage.setItem("candor_internal", "1");
+      try { localStorage.setItem("candor_internal", "1"); } catch { /* Storage may be unavailable. */ }
       url.searchParams.delete("internal");
       window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
     }
     void initializeUser().then(async () => {
-      if (localStorage.getItem("candor_internal") !== "1" || sessionStorage.getItem("candor:internal-synced") === "1") return;
+      try { if (localStorage.getItem("candor_internal") !== "1" || sessionStorage.getItem("candor:internal-synced") === "1") return; }
+      catch { return; }
       const anonymousId = getOrCreateAnonymousId();
       if (!anonymousId) return;
       const response = await fetch("/api/users/internal", {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ anonymous_id: anonymousId })
       });
-      if (response.ok) sessionStorage.setItem("candor:internal-synced", "1");
+      if (response.ok) try { sessionStorage.setItem("candor:internal-synced", "1"); } catch { /* Optional. */ }
     }).catch(() => undefined).finally(() => {
       userReady = true;
-      sessionStorage.setItem("candor:user-ready", "1");
+      try { sessionStorage.setItem("candor:user-ready", "1"); } catch { /* Optional. */ }
       window.dispatchEvent(new Event(USER_READY_EVENT));
     });
   }, []);

@@ -10,7 +10,7 @@ where n.nspname = 'public'
   and c.relname in (
     'users', 'comments', 'comment_reports', 'game_attempts', 'game_rounds',
     'source_link_clicks', 'badges', 'events', 'app_config', 'push_subscriptions', 'reminders_sent',
-    'events_external', 'user_timeline', 'reminder_events_external'
+    'events_external', 'user_timeline', 'reminder_events_external', 'play_feedback', 'play_feedback_summary'
   )
 order by c.relkind, c.relname;
 
@@ -21,7 +21,7 @@ where table_schema = 'public'
   and table_name in (
     'users', 'comments', 'comment_reports', 'game_attempts', 'game_rounds',
     'source_link_clicks', 'badges', 'events', 'app_config', 'push_subscriptions', 'reminders_sent',
-    'events_external', 'user_timeline', 'reminder_events_external'
+    'events_external', 'user_timeline', 'reminder_events_external', 'play_feedback', 'play_feedback_summary'
   )
 order by table_name, grantee, privilege_type;
 
@@ -56,5 +56,22 @@ begin
       end loop;
     end loop;
   end loop;
+end
+$$;
+
+-- After running play-feedback.sql, this also checks the feedback objects.
+do $$
+begin
+  if to_regclass('public.play_feedback') is null then return; end if;
+  if not (select relrowsecurity from pg_class where oid = 'public.play_feedback'::regclass)
+    or exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'play_feedback')
+    or has_table_privilege('anon', 'public.play_feedback', 'SELECT')
+    or has_table_privilege('anon', 'public.play_feedback', 'INSERT')
+    or has_table_privilege('authenticated', 'public.play_feedback', 'SELECT')
+    or has_table_privilege('authenticated', 'public.play_feedback', 'INSERT')
+    or has_table_privilege('anon', 'public.play_feedback_summary', 'SELECT')
+    or has_table_privilege('authenticated', 'public.play_feedback_summary', 'SELECT') then
+    raise exception 'Play feedback must remain server-only';
+  end if;
 end
 $$;

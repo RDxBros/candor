@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>A Buzzer: result</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="margin:0;background:#ddd;display:flex;justify-content:center;padding:24px">
+
+
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#111}a:hover{color:#0E7C74}
+</style>
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #111111; color: #FFFFFF; font-family: 'Bricolage Grotesque', system-ui, sans-serif; display: flex; flex-direction: column; gap: 18px; padding: 20px 20px 28px; overflow: hidden">
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <div style="font-size: 22px; font-weight: 800; letter-spacing: -0.03em">candor</div>
+    <button type="button" aria-label="Close" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #FFFFFF; background: transparent; color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+    </button>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 8px">
+    <div style="font-size: 14px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #D7FF3F">Done for today</div>
+    <h1 style="margin: 0; font-size: 46px; line-height: 0.95; font-weight: 800; letter-spacing: -0.035em">Streak goes to 3.</h1>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px" role="img" aria-label="3-day streak this week">
+    <div style="height: 40px; border-radius: 10px; background: #D7FF3F"></div>
+    <div style="height: 40px; border-radius: 10px; background: #D7FF3F"></div>
+    <div style="height: 40px; border-radius: 10px; background: #D7FF3F; box-shadow: 0 0 0 3px #111111, 0 0 0 6px #D7FF3F"></div>
+    <div style="height: 40px; border-radius: 10px; border: 2px dashed #6B6B68; box-sizing: border-box"></div>
+    <div style="height: 40px; border-radius: 10px; border: 2px dashed #6B6B68; box-sizing: border-box"></div>
+    <div style="height: 40px; border-radius: 10px; border: 2px dashed #6B6B68; box-sizing: border-box"></div>
+    <div style="height: 40px; border-radius: 10px; border: 2px dashed #6B6B68; box-sizing: border-box"></div>
+  </div>
+
+  <div style="background: #FFFFFF; color: #111111; border: 3px solid #FFFFFF; border-radius: 22px; box-shadow: 7px 7px 0 #D7FF3F; padding: 22px; display: flex; flex-direction: column; gap: 16px; transform: rotate(1.5deg); margin-top: 8px">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <div style="font-size: 15px; font-weight: 800">Spot the Lean #12</div>
+      <div style="font-size: 15px; font-weight: 800">candor</div>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <div style="display: flex; gap: 8px" role="img" aria-label="Left, correct; missed; center, correct">
+        <div style="width: 52px; height: 52px; border-radius: 12px; background: #22D3C5; border: 3px solid #111111; box-sizing: border-box"></div>
+        <div style="width: 52px; height: 52px; border-radius: 12px; border: 3px solid #111111; box-sizing: border-box"></div>
+        <div style="width: 52px; height: 52px; border-radius: 12px; background: #B9A6FF; border: 3px solid #111111; box-sizing: border-box"></div>
+      </div>
+      <div style="font-size: 64px; font-weight: 800; letter-spacing: -0.05em; line-height: 0.8">2/3</div>
+    </div>
+  </div>
+
+  <button type="button" style="min-height: 58px; display: flex; align-items: center; justify-content: center; gap: 10px; background: #D7FF3F; color: #111111; border: 0; border-radius: 16px; font-family: inherit; font-size: 19px; font-weight: 800; cursor: pointer; margin-top: 10px">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v13M7 8l5-5 5 5M5 14v6h14v-6"></path></svg>
+    <span>Share your score</span>
+  </button>
+
+  <div style="text-align: center; font-size: 16px; font-weight: 600; color: #D9D9D6">Next round in [hh:mm]</div>
+
+  <div style="flex-grow: 1"></div>
+
+  <a href="#" style="display: flex; align-items: center; justify-content: space-between; border: 2px solid #4A4A48; border-radius: 16px; padding: 16px; color: #FFFFFF; text-decoration: none">
+    <span style="display: flex; flex-direction: column; gap: 2px">
+      <span style="font-size: 17px; font-weight: 800">Want the whole story?</span>
+      <span style="font-size: 15px; font-weight: 500; color: #D9D9D6">Try the full Candor app</span>
+    </span>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+  </a>
+</div>
+
+</body>
+</html>

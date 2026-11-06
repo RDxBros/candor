@@ -3,7 +3,8 @@ export const ANALYTICS_EVENT_NAMES = [
   "story_completed", "section_opened", "section_visible", "filter_used", "extend_tapped", "round_selected",
   "game_started", "game_completed", "badge_earned", "comment_posted", "comment_flagged",
   "install_prompt_shown", "reminder_toggled", "reminder_sent", "reminder_opened", "error_shown", "app_backgrounded",
-  "play_landing_viewed", "play_round_started", "play_round_completed", "play_share_tapped", "play_full_app_tapped"
+  "play_landing_viewed", "play_round_started", "play_round_completed", "play_share_tapped", "play_full_app_tapped",
+  "play_disagree_opened", "play_disagree_submitted", "play_intent_answered", "play_about_opened"
 ] as const;
 
 export type AnalyticsEventName = typeof ANALYTICS_EVENT_NAMES[number];
@@ -49,7 +50,11 @@ export const ANALYTICS_SCHEMAS: Record<AnalyticsEventName, Schema> = {
   play_round_started: { ...playBase },
   play_round_completed: { ...playBase, score: required(integer(3)) },
   play_share_tapped: { ...playBase, method: required(oneOf("native", "clipboard")) },
-  play_full_app_tapped: { ...playBase }
+  play_full_app_tapped: { ...playBase },
+  play_disagree_opened: { round: required(integer(10_000)), excerpt_index: required(integer(2)) },
+  play_disagree_submitted: { round: required(integer(10_000)), excerpt_index: required(integer(2)), reason: required(oneOf("different_lean", "unrepresentative_excerpt", "other")) },
+  play_intent_answered: { round: required(integer(10_000)), answer: required(oneOf("yes", "maybe", "no")) },
+  play_about_opened: { from: required(oneOf("landing", "reveal")) }
 };
 
 export type AnalyticsValidationMode = "strict" | "sanitize";

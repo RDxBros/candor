@@ -71,3 +71,12 @@ test("standalone play events require the shared privacy-safe context", () => {
   assert.deepEqual(validateAnalyticsProperties("play_landing_viewed", { ...base, ref: "bad ref" }, "strict"), { ok: false, error: "invalid_properties", key: "ref" });
   assert.deepEqual(validateAnalyticsProperties("play_share_tapped", { ...base, method: "email" }, "strict"), { ok: false, error: "invalid_properties", key: "method" });
 });
+
+test("play feedback and intent events contain only allowlisted metadata", () => {
+  assert.equal(validateAnalyticsProperties("play_disagree_opened", { round: 2, excerpt_index: 1 }, "strict").ok, true);
+  assert.equal(validateAnalyticsProperties("play_disagree_submitted", { round: 2, excerpt_index: 1, reason: "other" }, "strict").ok, true);
+  assert.equal(validateAnalyticsProperties("play_intent_answered", { round: 2, answer: "maybe" }, "strict").ok, true);
+  assert.equal(validateAnalyticsProperties("play_about_opened", { from: "reveal" }, "strict").ok, true);
+  assert.deepEqual(validateAnalyticsProperties("play_disagree_submitted", { round: 2, excerpt_index: 1, reason: "other", note: "private" }, "strict"), { ok: false, error: "invalid_properties", key: "note" });
+  assert.deepEqual(validateAnalyticsProperties("play_intent_answered", { round: 2, answer: "sometimes" }, "strict"), { ok: false, error: "invalid_properties", key: "answer" });
+});

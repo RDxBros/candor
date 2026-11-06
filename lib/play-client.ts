@@ -46,6 +46,26 @@ export function buildPlayShareText(round: number, answers: Lean[], correctLeans:
   return `Spot the Lean #${round} ${grid} ${score}/3\n${origin.replace(/\/$/, "")}/play?ref=share`;
 }
 
+export function playResultMarks(answers: Lean[], correctLeans: Lean[]) {
+  return correctLeans.map((lean, index) => ({ lean, correct: answers[index] === lean }));
+}
+
+export function playStreakLabel(round: number, streak: number) {
+  return round === 1 ? "Day 1" : `${streak}-day streak`;
+}
+
+export function initialPlayScreen(state: PlayStoredRound) {
+  return state.completed ? "result" : state.answers.length ? "round" : "landing";
+}
+
+export function formatPlayCountdown(nextRound: number, target: number, now: number) {
+  const secondsLeft = Math.max(0, Math.ceil((target - now) / 1_000));
+  const hours = Math.floor(secondsLeft / 3_600);
+  const minutes = Math.floor((secondsLeft % 3_600) / 60);
+  const seconds = secondsLeft % 60;
+  return `Round #${nextRound} drops in ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.`;
+}
+
 export function consecutivePlayStreak(completedRounds: number[], currentRound: number) {
   const complete = new Set(completedRounds);
   let streak = 0;

@@ -1,15 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { track } from "../../lib/analytics";
 import { localDateKey } from "../../lib/client-storage";
 import type { Lean } from "../../lib/lean-game-pool";
 import type { PlayRound } from "../../lib/play-schedule";
+import { PLAY_FINAL_ROUND_MESSAGE, PLAY_SCORE_LINES } from "../../lib/play-copy";
+import { playFeedbackStorageKey, type PlayFeedbackReason } from "../../lib/play-feedback";
+import { PlayFeedbackSheet } from "./play-feedback-sheet";
 import {
-  applyPlayAnswer, buildPlayShareText, consecutivePlayStreak, daysBetween,
-  normalizeStoredRound, playRoundStorageKey, type PlayStoredRound
+  applyPlayAnswer, buildPlayShareText, consecutivePlayStreak, daysBetween, formatPlayCountdown,
+  initialPlayScreen, normalizeStoredRound, playResultMarks, playRoundStorageKey, playStreakLabel, type PlayStoredRound
 } from "../../lib/play-client";
 import styles from "./play.module.css";
 
@@ -23,11 +27,17 @@ const FIRST_PLAY_KEY = "candor:play:first-date";
 const LEANS: Lean[] = ["left", "center", "right"];
 
 function titleCase(value: string) { return value.charAt(0).toUpperCase() + value.slice(1); }
-function formatStoryDate(value: string) {
-  const date = new Date(`${value}T12:00:00Z`);
-  return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(date);
+function escapeRegExp(value: string) { return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+function HighlightedPassage({ text, terms }: { text: string; terms: string[] }) {
+  const matches = [...new Set(terms.map((term) => term.trim()).filter(Boolean))]
+    .filter((term) => text.toLocaleLowerCase().includes(term.toLocaleLowerCase()))
+    .sort((a, b) => b.length - a.length);
+  if (!matches.length) return <>{text}</>;
+  const matcher = new RegExp(`(${matches.map(escapeRegExp).join("|")})`, "giu");
+  return <>{text.split(matcher).map((part, index) => index % 2
+    ? <mark className={styles.keywordHighlight} key={index} style={{ "--highlight-delay": `${Math.min(index * 55, 220)}ms` } as CSSProperties}>{part}</mark>
+    : part)}</>;
 }
-function scoreLine(score: number) { return score === 3 ? "Perfect read." : score === 2 ? "Solid round." : score === 1 ? "You caught one." : "A tricky one."; }
 function reducedMotion() { return window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
 
 function ArrowIcon({ direction }: { direction: Lean }) {
@@ -46,30 +56,41 @@ function BoltIcon() {
   return <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z" /></svg>;
 }
 
-function Countdown({ target, fallback }: { target: number | null; fallback: string }) {
+function Countdown({ target, nextRound, onExpire }: { target: number | null; nextRound: number | null; onExpire: () => void }) {
   const [now, setNow] = useState(() => Date.now());
+  const expiredTarget = useRef<number | null>(null);
   useEffect(() => {
     if (!target) return;
-    const timer = window.setInterval(() => setNow(Date.now()), 30_000);
-    return () => window.clearInterval(timer);
+    setNow(Date.now());
+    const timer = window.setInterval(() => setNow(Date.now()), 1_000);
+    const onVisible = () => { if (!document.hidden) setNow(Date.now()); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => { window.clearInterval(timer); document.removeEventListener("visibilitychange", onVisible); };
   }, [target]);
-  if (!target) return fallback;
-  const remaining = Math.max(0, target - now);
-  const hours = Math.floor(remaining / 3_600_000);
-  const minutes = Math.floor((remaining % 3_600_000) / 60_000);
-  return `Next round in ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  useEffect(() => {
+    if (target && now >= target && expiredTarget.current !== target) {
+      expiredTarget.current = target;
+      onExpire();
+    }
+  }, [target, now, onExpire]);
+  if (!target || !nextRound) return PLAY_FINAL_ROUND_MESSAGE;
+  return <span role="timer" aria-live="off">{formatPlayCountdown(nextRound, target, now)}</span>;
 }
 
 export function DailyLeanGame({
-  round, refSource, nextUnlockAt, hasFutureScheduledRound, comingSoon
+  round, roundDateLabel, refSource, nextUnlockAt, nextRoundNumber, hasFutureScheduledRound, comingSoon
 }: {
   round: PlayRound | null;
+  roundDateLabel: string | null;
   refSource: string;
   nextUnlockAt: number | null;
+  nextRoundNumber: number | null;
   hasFutureScheduledRound: boolean;
   comingSoon: boolean;
 }) {
+  const router = useRouter();
   const [screen, setScreen] = useState<Screen>("landing");
+  const [explanationIndex, setExplanationIndex] = useState(0);
   const [stored, setStored] = useState<PlayStoredRound>(EMPTY_STATE);
   const [ready, setReady] = useState(false);
   const [isReturning, setIsReturning] = useState(false);
@@ -79,6 +100,12 @@ export function DailyLeanGame({
   const [thresholdLean, setThresholdLean] = useState<Lean | null>(null);
   const [outgoingLean, setOutgoingLean] = useState<Lean | null>(null);
   const [screenExiting, setScreenExiting] = useState(false);
+  const [shareState, setShareState] = useState<"idle" | "copied">("idle");
+  const [shareText, setShareText] = useState<string | null>(null);
+  const [feedbackIndex, setFeedbackIndex] = useState<number | null>(null);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState<number[]>([]);
+  const [intentAnswer, setIntentAnswer] = useState<"yes" | "maybe" | "no" | null>(null);
+  const [streakSaved, setStreakSaved] = useState(false);
   const thresholdRef = useRef<Lean | null>(null);
   const eventBase = useMemo<PlayEventBase | null>(() => round && ready ? {
     round: round.round, ref: refSource, is_returning: isReturning, days_since_first_play: daysSinceFirstPlay
@@ -92,15 +119,20 @@ export function DailyLeanGame({
     }
     if (!round) { setReady(true); return; }
     const today = localDateKey();
-    const first = localStorage.getItem(FIRST_PLAY_KEY);
+    let first: string | null = null;
+    try {
+      first = localStorage.getItem(FIRST_PLAY_KEY);
+      if (!first) localStorage.setItem(FIRST_PLAY_KEY, today);
+      localStorage.setItem("candor:play:storage-check", "1");
+      setStreakSaved(true);
+    } catch { setStreakSaved(false); }
     setIsReturning(Boolean(first));
-    if (!first) localStorage.setItem(FIRST_PLAY_KEY, today);
     setDaysSinceFirstPlay(daysBetween(first ?? today, today));
     let restored: PlayStoredRound | null = null;
     try { restored = normalizeStoredRound(JSON.parse(localStorage.getItem(playRoundStorageKey(round.round)) ?? "null")); } catch { restored = null; }
     const state = restored ?? EMPTY_STATE;
     setStored(state);
-    setScreen(state.completed ? "result" : state.answers.length ? "round" : "landing");
+    setScreen(initialPlayScreen(state));
     const completed: number[] = [];
     for (let number = 1; number <= round.round; number += 1) {
       try {
@@ -109,6 +141,11 @@ export function DailyLeanGame({
       } catch { /* Ignore malformed device state. */ }
     }
     setStreak(consecutivePlayStreak(completed, state.completed ? round.round : round.round - 1));
+    try {
+      const prior = localStorage.getItem(`candor:play:intent:${round.round}`);
+      setIntentAnswer(prior === "yes" || prior === "maybe" || prior === "no" ? prior : null);
+      setFeedbackSubmitted(round.cards.flatMap((_, index) => localStorage.getItem(playFeedbackStorageKey(round.round, index)) === "1" ? [index] : []));
+    } catch { setIntentAnswer(null); setFeedbackSubmitted([]); }
     setReady(true);
   }, [round]);
 
@@ -118,7 +155,8 @@ export function DailyLeanGame({
 
   const persist = useCallback((state: PlayStoredRound) => {
     if (!round) return;
-    localStorage.setItem(playRoundStorageKey(round.round), JSON.stringify(state));
+    try { localStorage.setItem(playRoundStorageKey(round.round), JSON.stringify(state)); }
+    catch { setStreakSaved(false); }
     setStored(state);
   }, [round]);
 
@@ -131,6 +169,7 @@ export function DailyLeanGame({
   }
 
   function startRound() {
+    if (stored.completed) { setScreen("result"); return; }
     if (!eventBase) return;
     track("play_round_started", eventBase);
     transitionTo("round");
@@ -151,7 +190,7 @@ export function DailyLeanGame({
       if (next.completed) {
         setStreak((value) => value + 1);
         if (eventBase) track("play_round_completed", { ...eventBase, score: next.score });
-        setScreen("reveal");
+        setScreen("result");
       }
     }, delay);
   }, [round, stored, outgoingLean, persist, eventBase]);
@@ -196,12 +235,27 @@ export function DailyLeanGame({
   async function share() {
     if (!round || !eventBase) return;
     const text = buildPlayShareText(round.round, stored.answers, round.cards.map((card) => card.biasLabel), window.location.origin);
+    setShareText(null);
     if (typeof navigator.share === "function") {
       try { await navigator.share({ text }); track("play_share_tapped", { ...eventBase, method: "native" }); return; }
       catch (error) { if ((error as DOMException)?.name === "AbortError") return; }
     }
-    try { await navigator.clipboard.writeText(text); track("play_share_tapped", { ...eventBase, method: "clipboard" }); }
-    catch { /* Sharing is optional; keep the result usable. */ }
+    try {
+      await navigator.clipboard.writeText(text);
+      track("play_share_tapped", { ...eventBase, method: "clipboard" });
+      setShareState("copied");
+      window.setTimeout(() => setShareState("idle"), 2_500);
+      return;
+    } catch { /* Clipboard unavailable; show the text for manual copy. */ }
+    setShareState("idle");
+    setShareText(text);
+  }
+
+  function answerIntent(answer: "yes" | "maybe" | "no") {
+    if (!round || intentAnswer) return;
+    setIntentAnswer(answer);
+    try { localStorage.setItem(`candor:play:intent:${round.round}`, answer); } catch { /* Session state still works. */ }
+    track("play_intent_answered", { round: round.round, answer });
   }
 
   if (!ready) return <main id="main-content" className={styles.shell} aria-busy="true" />;
@@ -213,7 +267,7 @@ export function DailyLeanGame({
     "--lean-shadow": thresholdLean ? `var(--play-${thresholdLean})` : "var(--play-ink)"
   } as CSSProperties;
 
-  if (screen === "landing") return <Landing round={round} onStart={startRound} exiting={screenExiting} />;
+  if (screen === "landing") return <Landing round={round} roundDateLabel={roundDateLabel} completed={stored.completed} onStart={startRound} exiting={screenExiting} onAbout={() => track("play_about_opened", { from: "landing" })} />;
   if (screen === "round") return <main id="main-content" className={`${styles.shell} ${styles.roundScreen}`}>
     <Header round={round.round} streak={streak} />
     <section className={styles.roundIntro}>
@@ -245,15 +299,35 @@ export function DailyLeanGame({
     </div>
     <p className={styles.gestureHint}>Swipe the card or tap a button</p>
   </main>;
-  if (screen === "reveal") return <Reveal round={round} stored={stored} exiting={screenExiting} onResult={() => transitionTo("result")} />;
+  if (screen === "reveal") return <><Reveal round={round} stored={stored} index={explanationIndex} exiting={screenExiting}
+    onNext={() => explanationIndex < round.cards.length - 1 ? setExplanationIndex(explanationIndex + 1) : transitionTo("result")}
+    onResult={() => transitionTo("result")} feedbackSent={feedbackSubmitted.includes(explanationIndex)}
+    onDisagree={() => { setFeedbackIndex(explanationIndex); track("play_disagree_opened", { round: round.round, excerpt_index: explanationIndex }); }}
+    onAbout={() => track("play_about_opened", { from: "reveal" })} />
+    {feedbackIndex !== null ? <PlayFeedbackSheet round={round.round} excerptIndex={feedbackIndex} currentLean={round.cards[feedbackIndex].biasLabel}
+      onClose={() => setFeedbackIndex(null)} onSubmitted={(reason: PlayFeedbackReason) => {
+        setFeedbackSubmitted((current) => [...new Set([...current, feedbackIndex])]);
+        track("play_disagree_submitted", { round: round.round, excerpt_index: feedbackIndex, reason });
+      }} onAlreadySubmitted={() => setFeedbackSubmitted((current) => [...new Set([...current, feedbackIndex])])} /> : null}</>;
   return <Result
     round={round}
     stored={stored}
     streak={streak}
     nextUnlockAt={nextUnlockAt}
+    nextRoundNumber={nextRoundNumber}
     hasFutureScheduledRound={hasFutureScheduledRound}
     onShare={share}
+    shareState={shareState}
+    shareText={shareText}
+    intentAnswer={intentAnswer}
+    onIntent={answerIntent}
+    streakSaved={streakSaved}
+    onExplanations={() => { setExplanationIndex(0); transitionTo("reveal"); }}
     onFullApp={() => eventBase && track("play_full_app_tapped", eventBase)}
+    onCountdownExpired={() => {
+      if (new URL(window.location.href).searchParams.has("preview_round")) router.replace("/play");
+      else router.refresh();
+    }}
   />;
 }
 
@@ -261,63 +335,87 @@ function Header({ round, streak }: { round: number; streak?: number }) {
   return <header className={styles.header}><strong>candor</strong>{streak ? <span className={styles.streakChip}><BoltIcon /> {streak}-day streak</span> : <span>#{round}</span>}</header>;
 }
 
-function Landing({ round, onStart, exiting }: { round: PlayRound; onStart: () => void; exiting: boolean }) {
+function Landing({ round, roundDateLabel, completed, onStart, exiting, onAbout }: { round: PlayRound; roundDateLabel: string | null; completed: boolean; onStart: () => void; exiting: boolean; onAbout: () => void }) {
   return <main id="main-content" className={`${styles.shell} ${styles.landing}`} data-screen-exiting={exiting}>
     <Header round={round.round} />
     <section className={styles.hero}>
       <h1>Spot the Lean</h1>
-      <p>One story. Three outlets. Can you tell who leans which way?</p>
+      <p>One story. Three outlets.</p>
     </section>
     <div className={styles.cardFan} aria-hidden="true">
       <span /><span /><div><small>Round story</small><strong>{round.headline}</strong><i><b /><b /><b /></i></div><em>Round #{round.round}</em>
     </div>
-    <div className={styles.roundDate}>Published {formatStoryDate(round.originalDate)}</div>
+    {roundDateLabel ? <div className={styles.roundDate}>{roundDateLabel}</div> : null}
     <ol className={styles.howList}>
-      <li><span>1</span><b>Read three excerpts from the same story.</b></li>
-      <li><span>2</span><b>Swipe left, up or right to call its lean.</b></li>
-      <li><span>3</span><b>Reveal the outlets and what gave them away.</b></li>
+      <li><span>1</span><b>Three excerpts, one story.</b></li>
+      <li><span>2</span><b>Swipe to call each lean.</b></li>
+      <li><span>3</span><b>Reveal the outlets and tells.</b></li>
     </ol>
-    <button type="button" className={styles.primaryAction} onClick={onStart}><span>Play round #{round.round}</span><span aria-hidden="true">→</span></button>
-    <Link className={styles.candorLink} href="/">What is Candor?</Link>
+    <div className={styles.landingActions}>
+      <button type="button" className={styles.primaryAction} onClick={onStart}><span>{completed ? "See your result" : "Play today’s round"}</span><span aria-hidden="true">→</span></button>
+      <p className={styles.accountNote}>No account needed</p>
+      <Link className={styles.candorLink} href="/" onClick={onAbout}>What is Candor?</Link>
+    </div>
   </main>;
 }
 
-function Reveal({ round, stored, onResult, exiting }: { round: PlayRound; stored: PlayStoredRound; onResult: () => void; exiting: boolean }) {
+function Reveal({ round, stored, index, onNext, onResult, exiting, feedbackSent, onDisagree, onAbout }: {
+  round: PlayRound; stored: PlayStoredRound; index: number; onNext: () => void; onResult: () => void; exiting: boolean;
+  feedbackSent: boolean; onDisagree: () => void; onAbout: () => void;
+}) {
+  const card = round.cards[index];
+  const correct = stored.answers[index] === card.biasLabel;
   return <main id="main-content" className={`${styles.shell} ${styles.revealScreen}`} data-screen-exiting={exiting}>
     <Header round={round.round} />
-    <section className={styles.scoreCard} aria-live="polite"><div><span>Your score</span><strong>{scoreLine(stored.score)}</strong></div><b>{stored.score}<small>/3</small></b></section>
-    <section className={styles.revealList} aria-label="Outlet reveal">
-      {round.cards.map((card, index) => {
-        const correct = stored.answers[index] === card.biasLabel;
-        return <article key={card.sourceId} style={{ "--stagger": `${index * 60}ms` } as CSSProperties}>
-          <div><span className={styles.leanChip} data-lean={card.biasLabel}>{titleCase(card.biasLabel)}</span><strong>{card.outlet}</strong><span className={styles.resultIcon} data-correct={correct} role="img" aria-label={correct ? "Correct" : "Missed"}><CheckIcon correct={correct} /></span></div>
-          {card.explanation ? <p><b>The tell:</b> {card.explanation}</p> : null}
-        </article>;
-      })}
-    </section>
-    <button type="button" className={styles.primaryAction} onClick={onResult}>See your result</button>
-    <Link className={styles.candorLink} href={`/story/${encodeURIComponent(round.storyId)}?day=${encodeURIComponent(round.cards[0].day)}`}>Read all 3 articles</Link>
+    <p className={styles.explanationProgress}>Excerpt {index + 1} of {round.cards.length}</p>
+    <article className={styles.explanationCard} key={card.sourceId} aria-live="polite" style={{ "--highlight-color": `var(--play-${card.biasLabel})` } as CSSProperties}>
+      <div className={styles.explanationHeader}><span className={styles.leanChip} data-lean={card.biasLabel}>{titleCase(card.biasLabel)}</span><strong>{card.outlet}</strong></div>
+      <blockquote><HighlightedPassage text={card.gameExcerpt} terms={card.terms} /></blockquote>
+      <p className={styles.explanationOutcome}><span className={styles.resultIcon} data-correct={correct} aria-hidden="true"><CheckIcon correct={correct} /></span>You said {titleCase(stored.answers[index])}</p>
+      {feedbackSent ? <p className={styles.feedbackSent}>Feedback sent</p> :
+        <button type="button" className={styles.disagreeAction} onClick={onDisagree}>Disagree with this rating?</button>}
+      {card.explanation ? <p className={styles.explanationTell}><b>The tell:</b> {card.explanation}</p> : null}
+    </article>
+    <button type="button" className={styles.primaryAction} onClick={onNext}>{index < round.cards.length - 1 ? "Next explanation" : "Back to results"}</button>
+    {index < round.cards.length - 1 ? <button type="button" className={styles.explanationSkip} onClick={onResult}>Back to results</button> : null}
+    <Link href="/" className={styles.explanationSkip} onClick={onAbout}>What is Candor?</Link>
   </main>;
 }
 
-function Result({ round, stored, streak, nextUnlockAt, hasFutureScheduledRound, onShare, onFullApp }: {
-  round: PlayRound; stored: PlayStoredRound; streak: number; nextUnlockAt: number | null; hasFutureScheduledRound: boolean;
-  onShare: () => void; onFullApp: () => void;
+function Result({ round, stored, streak, nextUnlockAt, nextRoundNumber, hasFutureScheduledRound, onShare, shareState, shareText, intentAnswer, onIntent, streakSaved, onExplanations, onFullApp, onCountdownExpired }: {
+  round: PlayRound; stored: PlayStoredRound; streak: number; nextUnlockAt: number | null; nextRoundNumber: number | null; hasFutureScheduledRound: boolean;
+  onShare: () => void; shareState: "idle" | "copied"; shareText: string | null; intentAnswer: "yes" | "maybe" | "no" | null;
+  onIntent: (answer: "yes" | "maybe" | "no") => void; streakSaved: boolean;
+  onExplanations: () => void; onFullApp: () => void; onCountdownExpired: () => void;
 }) {
+  const marks = playResultMarks(stored.answers, round.cards.map((card) => card.biasLabel));
   return <main id="main-content" className={`${styles.shell} ${styles.resultScreen}`}>
-    <Link href="/" className={styles.closeButton} aria-label="Close and open Candor"><CloseIcon /></Link>
-    <section className={styles.resultIntro}>
-      <span>Round complete</span><h1>Streak goes to {streak}.</h1>
-      <div className={styles.streakWeek} role="img" aria-label={`${streak}-round streak`}>
-        {Array.from({ length: 7 }, (_, index) => <i key={index} data-filled={index < Math.min(streak, 7)} data-current={index === Math.min(streak, 7) - 1} />)}
+    <header className={styles.resultHeader}>
+      <strong>candor</strong>
+      <div className={styles.resultHeaderActions}>
+        <span className={styles.resultStreak}><BoltIcon /> {playStreakLabel(round.round, streak)}</span>
+        <Link href="/" className={styles.closeButton} aria-label="Close and open Candor"><CloseIcon /></Link>
       </div>
+    </header>
+    <section className={styles.resultIntro}>
+      <span>Round complete</span><h1 aria-live="polite">{stored.score} out of {round.cards.length}.</h1>
+      <p>{PLAY_SCORE_LINES[stored.score]}</p>
     </section>
     <section className={styles.resultTile}>
-      <div className={styles.resultMarks}><span /><span /></div>
-      <div><small>Spot the Lean #{round.round}</small><strong>{stored.score} out of 3</strong><p>{scoreLine(stored.score)}</p></div>
-      <button type="button" onClick={onShare}><span aria-hidden="true">↥</span> Share your score</button>
+      <div className={styles.resultMarks} role="img" aria-label={marks.map((mark, index) => `Excerpt ${index + 1}: ${mark.correct ? `${mark.lean}, right` : "missed"}`).join("; ")}>
+        {marks.map((mark, index) => <span key={round.cards[index].sourceId} data-lean={mark.lean} data-correct={mark.correct} />)}
+      </div>
+      <ol className={styles.resultBreakdown}>{round.cards.map((card, index) => <li key={card.sourceId}><span>Excerpt {index + 1}</span><b>{stored.answers[index] === card.biasLabel ? "✓ Right" : "× Missed"}</b></li>)}</ol>
+      <button type="button" className={styles.explanationsAction} onClick={onExplanations}>View explanations <span aria-hidden="true">→</span></button>
     </section>
-    <p className={styles.countdown}><Countdown target={nextUnlockAt} fallback={hasFutureScheduledRound ? "New rounds coming soon" : "New rounds coming soon"} /></p>
+    <button type="button" className={styles.resultShare} onClick={onShare}><span aria-hidden="true">{shareState === "copied" ? "✓" : "↥"}</span> {shareState === "copied" ? "Copied!" : "Share your score"}</button>
+    {intentAnswer ? null : <section className={styles.intentQuestion} aria-label="Would you play again tomorrow?">
+      <p>Would you play again tomorrow?</p>
+      <div>{(["yes", "maybe", "no"] as const).map((answer) => <button key={answer} type="button" onClick={() => onIntent(answer)}>{titleCase(answer)}</button>)}</div>
+    </section>}
+    {streakSaved ? <p className={styles.streakSaved}>Streak saved on this device</p> : null}
+    {shareText ? <p className={styles.shareFallback}>{shareText}</p> : null}
+    <div className={styles.countdown}><p><Countdown target={nextUnlockAt} nextRound={nextRoundNumber} onExpire={onCountdownExpired} /></p>{round.round === 1 && nextRoundNumber === 2 && hasFutureScheduledRound && nextUnlockAt ? <small>Round #2 tomorrow.</small> : null}</div>
     <Link href="/" className={styles.fullAppLink} onClick={onFullApp}><span><b>Want the whole story?</b><small>Try the full Candor app</small></span><span aria-hidden="true">→</span></Link>
   </main>;
 }
