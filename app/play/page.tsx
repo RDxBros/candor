@@ -28,7 +28,6 @@ export default async function PlayPage({ searchParams }: { searchParams: SearchP
   const selected = release.selected;
   const currentPlayDate = dateInTimeZone(now, timeZone);
   const nextUnlockAt = launchDate && release.next ? countdownTarget(launchDate, release.next.round, timeZone) : null;
-  const hasFutureScheduledRound = selected ? schedule.some((entry) => entry.round > selected.round) : schedule.length > 0;
 
   return <PlayTimeZoneGate key={timeZone} serverTimeZone={timeZone}><DailyLeanGame
     key={selected?.round ?? "coming-soon"}
@@ -37,7 +36,6 @@ export default async function PlayPage({ searchParams }: { searchParams: SearchP
     refSource={ref}
     nextUnlockAt={nextUnlockAt}
     nextRoundNumber={release.next?.round ?? null}
-    hasFutureScheduledRound={hasFutureScheduledRound}
     comingSoon={!selected}
   /></PlayTimeZoneGate>;
 }

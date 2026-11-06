@@ -58,10 +58,10 @@ export function PlayFeedbackSheet({ round, excerptIndex, currentLean, onClose, o
   }
 
   return <Modal labelId="play-feedback-heading" className={styles.feedbackSheet} onDismiss={onClose}>
-    <div className={styles.feedbackTop}><h2 id="play-feedback-heading">Disagree with this rating?</h2><button type="button" onClick={onClose} aria-label="Close feedback">×</button></div>
+    <div className={styles.feedbackTop}><h2 id="play-feedback-heading">What seems off?</h2><button type="button" onClick={onClose} aria-label="Close feedback">×</button></div>
     {status === "sent" ? <div className={styles.feedbackThanks} role="status"><p>Thanks for helping us improve ratings.</p><button type="button" className={styles.primaryAction} onClick={onClose}>Done</button></div> :
       <form onSubmit={submit} className={styles.feedbackForm}>
-        <fieldset><legend>What seems off?</legend>
+        <fieldset aria-labelledby="play-feedback-heading">
           <label><input type="radio" name="reason" checked={reason === "different_lean"} onChange={() => setReason("different_lean")} />I think this outlet leans differently</label>
           {reason === "different_lean" ? <div className={styles.feedbackLeans} role="group" aria-label="Suggested lean">
             {(["left", "center", "right"] as const).map((lean) => <label key={lean}><input type="radio" name="lean" checked={suggestedLean === lean} onChange={() => setSuggestedLean(lean)} />{lean[0].toUpperCase() + lean.slice(1)}</label>)}

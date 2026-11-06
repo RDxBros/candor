@@ -11,6 +11,7 @@ import type { PlayRound } from "../../lib/play-schedule";
 import { PLAY_FINAL_ROUND_MESSAGE, PLAY_SCORE_LINES } from "../../lib/play-copy";
 import { playFeedbackStorageKey, type PlayFeedbackReason } from "../../lib/play-feedback";
 import { PlayFeedbackSheet } from "./play-feedback-sheet";
+import { Modal } from "../../components/modal";
 import {
   applyPlayAnswer, buildPlayShareText, consecutivePlayStreak, daysBetween, formatPlayCountdown,
   initialPlayScreen, normalizeStoredRound, playResultMarks, playRoundStorageKey, playStreakLabel, type PlayStoredRound
@@ -78,14 +79,13 @@ function Countdown({ target, nextRound, onExpire }: { target: number | null; nex
 }
 
 export function DailyLeanGame({
-  round, roundDateLabel, refSource, nextUnlockAt, nextRoundNumber, hasFutureScheduledRound, comingSoon
+  round, roundDateLabel, refSource, nextUnlockAt, nextRoundNumber, comingSoon
 }: {
   round: PlayRound | null;
   roundDateLabel: string | null;
   refSource: string;
   nextUnlockAt: number | null;
   nextRoundNumber: number | null;
-  hasFutureScheduledRound: boolean;
   comingSoon: boolean;
 }) {
   const router = useRouter();
@@ -106,6 +106,7 @@ export function DailyLeanGame({
   const [feedbackSubmitted, setFeedbackSubmitted] = useState<number[]>([]);
   const [intentAnswer, setIntentAnswer] = useState<"yes" | "maybe" | "no" | null>(null);
   const [streakSaved, setStreakSaved] = useState(false);
+  const [headlineOpen, setHeadlineOpen] = useState(false);
   const thresholdRef = useRef<Lean | null>(null);
   const eventBase = useMemo<PlayEventBase | null>(() => round && ready ? {
     round: round.round, ref: refSource, is_returning: isReturning, days_since_first_play: daysSinceFirstPlay
@@ -268,14 +269,17 @@ export function DailyLeanGame({
   } as CSSProperties;
 
   if (screen === "landing") return <Landing round={round} roundDateLabel={roundDateLabel} completed={stored.completed} onStart={startRound} exiting={screenExiting} onAbout={() => track("play_about_opened", { from: "landing" })} />;
-  if (screen === "round") return <main id="main-content" className={`${styles.shell} ${styles.roundScreen}`}>
+  if (screen === "round") return <><main id="main-content" className={`${styles.shell} ${styles.roundScreen}`}>
     <Header round={round.round} streak={streak} />
     <section className={styles.roundIntro}>
       <h1>Who wrote this?</h1>
       <div className={styles.progress} aria-label={`${stored.answers.length + 1} of 3 excerpts`}>
         {round.cards.map((card, index) => <span key={card.sourceId} data-filled={index < stored.answers.length} />)}
       </div>
-      <div className={styles.storyPill}>Story: {round.headline}</div>
+      <button type="button" className={styles.storyPill} onClick={() => setHeadlineOpen(true)}
+        aria-haspopup="dialog" aria-expanded={headlineOpen} aria-label={`Read full story title: ${round.headline}`}>
+        <span>Story: {round.headline}</span><span aria-hidden="true">↗</span>
+      </button>
     </section>
     <section className={styles.cardStage} aria-label={`Excerpt ${stored.answers.length + 1} of 3`}>
       <div className={styles.stackCard} /><div className={styles.stackCard} />
@@ -298,7 +302,9 @@ export function DailyLeanGame({
       {LEANS.map((lean) => <button key={lean} type="button" data-lean={lean} data-active={thresholdLean === lean} onClick={() => choose(lean)}><ArrowIcon direction={lean} /><span>{titleCase(lean)}</span></button>)}
     </div>
     <p className={styles.gestureHint}>Swipe the card or tap a button</p>
-  </main>;
+  </main>{headlineOpen ? <Modal labelId="play-story-heading" className={styles.headlineSheet} onDismiss={() => setHeadlineOpen(false)}>
+    <div className={styles.feedbackTop}><h2 id="play-story-heading">{round.headline}</h2><button type="button" onClick={() => setHeadlineOpen(false)} aria-label="Close story title">×</button></div>
+  </Modal> : null}</>;
   if (screen === "reveal") return <><Reveal round={round} stored={stored} index={explanationIndex} exiting={screenExiting}
     onNext={() => explanationIndex < round.cards.length - 1 ? setExplanationIndex(explanationIndex + 1) : transitionTo("result")}
     onResult={() => transitionTo("result")} feedbackSent={feedbackSubmitted.includes(explanationIndex)}
@@ -315,7 +321,6 @@ export function DailyLeanGame({
     streak={streak}
     nextUnlockAt={nextUnlockAt}
     nextRoundNumber={nextRoundNumber}
-    hasFutureScheduledRound={hasFutureScheduledRound}
     onShare={share}
     shareState={shareState}
     shareText={shareText}
@@ -336,14 +341,14 @@ function Header({ round, streak }: { round: number; streak?: number }) {
 }
 
 function Landing({ round, roundDateLabel, completed, onStart, exiting, onAbout }: { round: PlayRound; roundDateLabel: string | null; completed: boolean; onStart: () => void; exiting: boolean; onAbout: () => void }) {
-  return <main id="main-content" className={`${styles.shell} ${styles.landing}`} data-screen-exiting={exiting}>
+  return <><main id="main-content" className={`${styles.shell} ${styles.landing}`} data-screen-exiting={exiting}>
     <Header round={round.round} />
     <section className={styles.hero}>
       <h1>Spot the Lean</h1>
       <p>One story. Three outlets.</p>
     </section>
     <div className={styles.cardFan} aria-hidden="true">
-      <span /><span /><div><small>Round story</small><strong>{round.headline}</strong><i><b /><b /><b /></i></div><em>Round #{round.round}</em>
+      <span /><span /><div><small>Round story</small><strong>{round.headline}</strong><i><b /><b /><b /></i></div><em>Today's drop</em>
     </div>
     {roundDateLabel ? <div className={styles.roundDate}>{roundDateLabel}</div> : null}
     <ol className={styles.howList}>
@@ -354,9 +359,10 @@ function Landing({ round, roundDateLabel, completed, onStart, exiting, onAbout }
     <div className={styles.landingActions}>
       <button type="button" className={styles.primaryAction} onClick={onStart}><span>{completed ? "See your result" : "Play today’s round"}</span><span aria-hidden="true">→</span></button>
       <p className={styles.accountNote}>No account needed</p>
-      <Link className={styles.candorLink} href="/" onClick={onAbout}>What is Candor?</Link>
     </div>
-  </main>;
+  </main>
+  <footer className={styles.landingFooter}><Link className={styles.candorLink} href="/" onClick={onAbout}>What is Candor?</Link></footer>
+  </>;
 }
 
 function Reveal({ round, stored, index, onNext, onResult, exiting, feedbackSent, onDisagree, onAbout }: {
@@ -382,8 +388,8 @@ function Reveal({ round, stored, index, onNext, onResult, exiting, feedbackSent,
   </main>;
 }
 
-function Result({ round, stored, streak, nextUnlockAt, nextRoundNumber, hasFutureScheduledRound, onShare, shareState, shareText, intentAnswer, onIntent, streakSaved, onExplanations, onFullApp, onCountdownExpired }: {
-  round: PlayRound; stored: PlayStoredRound; streak: number; nextUnlockAt: number | null; nextRoundNumber: number | null; hasFutureScheduledRound: boolean;
+function Result({ round, stored, streak, nextUnlockAt, nextRoundNumber, onShare, shareState, shareText, intentAnswer, onIntent, streakSaved, onExplanations, onFullApp, onCountdownExpired }: {
+  round: PlayRound; stored: PlayStoredRound; streak: number; nextUnlockAt: number | null; nextRoundNumber: number | null;
   onShare: () => void; shareState: "idle" | "copied"; shareText: string | null; intentAnswer: "yes" | "maybe" | "no" | null;
   onIntent: (answer: "yes" | "maybe" | "no") => void; streakSaved: boolean;
   onExplanations: () => void; onFullApp: () => void; onCountdownExpired: () => void;
@@ -413,9 +419,9 @@ function Result({ round, stored, streak, nextUnlockAt, nextRoundNumber, hasFutur
       <p>Would you play again tomorrow?</p>
       <div>{(["yes", "maybe", "no"] as const).map((answer) => <button key={answer} type="button" onClick={() => onIntent(answer)}>{titleCase(answer)}</button>)}</div>
     </section>}
-    {streakSaved ? <p className={styles.streakSaved}>Streak saved on this device</p> : null}
+    {intentAnswer && streakSaved ? <p className={styles.streakSaved}>Streak saved on this device</p> : null}
     {shareText ? <p className={styles.shareFallback}>{shareText}</p> : null}
-    <div className={styles.countdown}><p><Countdown target={nextUnlockAt} nextRound={nextRoundNumber} onExpire={onCountdownExpired} /></p>{round.round === 1 && nextRoundNumber === 2 && hasFutureScheduledRound && nextUnlockAt ? <small>Round #2 tomorrow.</small> : null}</div>
+    <div className={styles.countdown}><p><Countdown target={nextUnlockAt} nextRound={nextRoundNumber} onExpire={onCountdownExpired} /></p></div>
     <Link href="/" className={styles.fullAppLink} onClick={onFullApp}><span><b>Want the whole story?</b><small>Try the full Candor app</small></span><span aria-hidden="true">→</span></Link>
   </main>;
 }

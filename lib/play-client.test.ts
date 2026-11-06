@@ -85,7 +85,7 @@ test("result screen follows the requested reading order", () => {
     previous = index;
   }
   assert.doesNotMatch(result, /streakWeek|Streak goes to|Spot the Lean #/);
-  assert.match(result, /Round #2 tomorrow\./);
+  assert.doesNotMatch(result, /Round #2 tomorrow\./);
   assert.match(styles, /\.resultMarks span \{[^}]*border: 3px solid var\(--play-ink\)[^}]*background: var\(--play-card\)/);
   for (const lean of ["left", "center", "right"]) {
     assert.match(styles, new RegExp(`\\.resultMarks span\\[data-correct="true"\\]\\[data-lean="${lean}"\\] \\{ background: var\\(--play-${lean}\\)`));

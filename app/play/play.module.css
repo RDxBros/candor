@@ -122,17 +122,19 @@
 .cardFan b:nth-child(3) { background: var(--play-right); }
 .cardFan em {
   position: absolute;
-  right: 6px;
+  right: 0;
   top: 40px;
-  padding: 10px 14px;
+  max-width: calc(100% - 8px);
+  padding: 9px 12px;
   color: var(--play-ink);
   background: var(--play-reward);
   border: 3px solid var(--play-ink);
   border-radius: 999px;
   box-shadow: 4px 4px 0 var(--play-ink);
-  font-size: 16px;
+  font-size: clamp(12px, 3.25vw, 14px);
   font-style: normal;
   font-weight: 800;
+  white-space: nowrap;
   transform: rotate(10deg);
   animation: round-badge-float 5.2s .35s ease-in-out infinite;
 }
@@ -182,6 +184,12 @@
 .primaryAction:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--play-left); }
 .primaryAction > span:last-child { transition: transform 160ms ease-out; }
 .landingActions { margin-top: auto; display: grid; gap: 8px; }
+.landingFooter {
+  width: min(100%, 430px);
+  margin: 0 auto;
+  padding: 4px 20px max(20px, env(safe-area-inset-bottom));
+  background: var(--play-ground);
+}
 .accountNote {
   margin: 0;
   color: var(--play-muted);
@@ -220,17 +228,25 @@
 .progress span[data-filled="true"] { background: var(--play-ink); box-shadow: inset 0 0 0 2px var(--play-ink), inset 0 0 0 4px var(--play-reward); }
 .storyPill {
   align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
   max-width: 100%;
   padding: 5px 12px;
-  overflow: hidden;
   border: 2px solid var(--play-ink);
   border-radius: 999px;
+  color: var(--play-ink);
   background: var(--play-card);
   font-size: 14px;
   font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-align: left;
+  cursor: pointer;
 }
+.storyPill span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.storyPill span:last-child { flex: none; font-size: 16px; font-weight: 800; }
+.headlineSheet { width: min(100%, 430px); max-height: min(70dvh, 500px); overflow-y: auto; padding: 20px; color: var(--play-ink); background: var(--play-card); border: 3px solid var(--play-ink); border-radius: 22px 22px 0 0; box-shadow: 0 -5px 0 var(--play-reward); }
+.headlineSheet h2 { overflow-wrap: anywhere; }
 
 .cardStage { position: relative; min-height: 230px; flex: 1; }
 .stackCard,
@@ -479,7 +495,7 @@
 @media (max-width: 350px) {
   .shell { padding-right: 14px; padding-left: 14px; }
   .hero p { font-size: 17px; }
-  .cardFan em { right: 0; padding: 8px 11px; font-size: 14px; }
+  .cardFan em { padding: 8px 11px; }
   .howList { gap: 7px; }
   .howList li { font-size: 14px; }
   .storyPill { font-size: 12px; }
