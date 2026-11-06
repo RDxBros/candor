@@ -54,7 +54,7 @@ export const ANALYTICS_SCHEMAS: Record<AnalyticsEventName, Schema> = {
   play_disagree_opened: { round: required(integer(10_000)), excerpt_index: required(integer(2)) },
   play_disagree_submitted: { round: required(integer(10_000)), excerpt_index: required(integer(2)), reason: required(oneOf("different_lean", "unrepresentative_excerpt", "other")) },
   play_intent_answered: { round: required(integer(10_000)), answer: required(oneOf("yes", "maybe", "no")) },
-  play_about_opened: { from: required(oneOf("landing", "reveal")) }
+  play_about_opened: { from: required(oneOf("landing", "result")) }
 };
 
 export type AnalyticsValidationMode = "strict" | "sanitize";

@@ -110,3 +110,14 @@ test("play landing uses the concise subtitle and lets the story card grow", () =
   assert.match(styles, /\.landingActions \{[^}]*margin-top: auto/);
   assert.match(styles, /@media \(hover: hover\) and \(pointer: fine\)/);
 });
+
+test("What is Candor appears only on the play landing and result screens", () => {
+  const component = readFileSync("app/play/play-client.tsx", "utf8");
+  const landing = component.slice(component.indexOf("function Landing("), component.indexOf("function Reveal("));
+  const reveal = component.slice(component.indexOf("function Reveal("), component.indexOf("function Result("));
+  const result = component.slice(component.indexOf("function Result("), component.indexOf("function ComingSoon()"));
+  assert.match(landing, />What is Candor\?<\/Link>/);
+  assert.doesNotMatch(reveal, /What is Candor\?/);
+  assert.match(result, />What is Candor\?<\/Link>/);
+  assert.equal(component.match(/What is Candor\?/g)?.length, 2);
+});

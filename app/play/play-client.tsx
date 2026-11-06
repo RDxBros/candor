@@ -308,8 +308,7 @@ export function DailyLeanGame({
   if (screen === "reveal") return <><Reveal round={round} stored={stored} index={explanationIndex} exiting={screenExiting}
     onNext={() => explanationIndex < round.cards.length - 1 ? setExplanationIndex(explanationIndex + 1) : transitionTo("result")}
     onResult={() => transitionTo("result")} feedbackSent={feedbackSubmitted.includes(explanationIndex)}
-    onDisagree={() => { setFeedbackIndex(explanationIndex); track("play_disagree_opened", { round: round.round, excerpt_index: explanationIndex }); }}
-    onAbout={() => track("play_about_opened", { from: "reveal" })} />
+    onDisagree={() => { setFeedbackIndex(explanationIndex); track("play_disagree_opened", { round: round.round, excerpt_index: explanationIndex }); }} />
     {feedbackIndex !== null ? <PlayFeedbackSheet round={round.round} excerptIndex={feedbackIndex} currentLean={round.cards[feedbackIndex].biasLabel}
       onClose={() => setFeedbackIndex(null)} onSubmitted={(reason: PlayFeedbackReason) => {
         setFeedbackSubmitted((current) => [...new Set([...current, feedbackIndex])]);
@@ -329,6 +328,7 @@ export function DailyLeanGame({
     streakSaved={streakSaved}
     onExplanations={() => { setExplanationIndex(0); transitionTo("reveal"); }}
     onFullApp={() => eventBase && track("play_full_app_tapped", eventBase)}
+    onAbout={() => track("play_about_opened", { from: "result" })}
     onCountdownExpired={() => {
       if (new URL(window.location.href).searchParams.has("preview_round")) router.replace("/play");
       else router.refresh();
@@ -365,9 +365,9 @@ function Landing({ round, roundDateLabel, completed, onStart, exiting, onAbout }
   </>;
 }
 
-function Reveal({ round, stored, index, onNext, onResult, exiting, feedbackSent, onDisagree, onAbout }: {
+function Reveal({ round, stored, index, onNext, onResult, exiting, feedbackSent, onDisagree }: {
   round: PlayRound; stored: PlayStoredRound; index: number; onNext: () => void; onResult: () => void; exiting: boolean;
-  feedbackSent: boolean; onDisagree: () => void; onAbout: () => void;
+  feedbackSent: boolean; onDisagree: () => void;
 }) {
   const card = round.cards[index];
   const correct = stored.answers[index] === card.biasLabel;
@@ -384,15 +384,14 @@ function Reveal({ round, stored, index, onNext, onResult, exiting, feedbackSent,
     </article>
     <button type="button" className={styles.primaryAction} onClick={onNext}>{index < round.cards.length - 1 ? "Next explanation" : "Back to results"}</button>
     {index < round.cards.length - 1 ? <button type="button" className={styles.explanationSkip} onClick={onResult}>Back to results</button> : null}
-    <Link href="/" className={styles.explanationSkip} onClick={onAbout}>What is Candor?</Link>
   </main>;
 }
 
-function Result({ round, stored, streak, nextUnlockAt, nextRoundNumber, onShare, shareState, shareText, intentAnswer, onIntent, streakSaved, onExplanations, onFullApp, onCountdownExpired }: {
+function Result({ round, stored, streak, nextUnlockAt, nextRoundNumber, onShare, shareState, shareText, intentAnswer, onIntent, streakSaved, onExplanations, onFullApp, onAbout, onCountdownExpired }: {
   round: PlayRound; stored: PlayStoredRound; streak: number; nextUnlockAt: number | null; nextRoundNumber: number | null;
   onShare: () => void; shareState: "idle" | "copied"; shareText: string | null; intentAnswer: "yes" | "maybe" | "no" | null;
   onIntent: (answer: "yes" | "maybe" | "no") => void; streakSaved: boolean;
-  onExplanations: () => void; onFullApp: () => void; onCountdownExpired: () => void;
+  onExplanations: () => void; onFullApp: () => void; onAbout: () => void; onCountdownExpired: () => void;
 }) {
   const marks = playResultMarks(stored.answers, round.cards.map((card) => card.biasLabel));
   return <main id="main-content" className={`${styles.shell} ${styles.resultScreen}`}>
@@ -423,6 +422,7 @@ function Result({ round, stored, streak, nextUnlockAt, nextRoundNumber, onShare,
     {shareText ? <p className={styles.shareFallback}>{shareText}</p> : null}
     <div className={styles.countdown}><p><Countdown target={nextUnlockAt} nextRound={nextRoundNumber} onExpire={onCountdownExpired} /></p></div>
     <Link href="/" className={styles.fullAppLink} onClick={onFullApp}><span><b>Want the whole story?</b><small>Try the full Candor app</small></span><span aria-hidden="true">→</span></Link>
+    <Link href="/" className={styles.resultAboutLink} onClick={onAbout}>What is Candor?</Link>
   </main>;
 }
 
